@@ -159,7 +159,6 @@ const obtenerPayloadActualizacion = (suma, esEquipo1) => __awaiter(void 0, void 
 const ActualizarGame = (payload) => __awaiter(void 0, void 0, void 0, function* () {
     const { suma, esEquipo1 } = payload;
     const payloadActualizar = yield obtenerPayloadActualizacion(suma, esEquipo1);
-    yield (0, exports.ActualizarPartidoActual)(payloadActualizar);
-    return yield (0, exports.ObtenerPartidoActual)();
+    return yield (0, exports.ActualizarPartidoActual)(payloadActualizar);
 });
 exports.ActualizarGame = ActualizarGame;

@@ -9,26 +9,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.RutaActualizarEquipo = exports.RutaObtenerEquipos = void 0;
-const equipo_1 = require("../manejadores/equipo");
-const RutaObtenerEquipos = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.RutaActualizarConfiguracion = exports.RutaObtenerConfiguracion = void 0;
+const configuracion_1 = require("../manejadores/configuracion");
+const RutaObtenerConfiguracion = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const equipos = yield (0, equipo_1.ObtenerEquipos)();
-        res.status(200).json(equipos);
-    }
-    catch (e) {
-        console.log(e);
-        res.sendStatus(500);
-    }
-});
-exports.RutaObtenerEquipos = RutaObtenerEquipos;
-const RutaActualizarEquipo = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        if (!req.params.idEquipo && !(req === null || req === void 0 ? void 0 : req.body)) {
-            res.sendStatus(400);
-            return;
-        }
-        const configuracion = yield (0, equipo_1.ActualizarEquipo)(parseInt(req.params.idEquipo), req.body);
+        const configuracion = yield (0, configuracion_1.ObtenerConfiguracion)();
         res.status(200).json(configuracion);
     }
     catch (e) {
@@ -36,4 +21,19 @@ const RutaActualizarEquipo = (req, res) => __awaiter(void 0, void 0, void 0, fun
         res.sendStatus(500);
     }
 });
-exports.RutaActualizarEquipo = RutaActualizarEquipo;
+exports.RutaObtenerConfiguracion = RutaObtenerConfiguracion;
+const RutaActualizarConfiguracion = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        if (!(req === null || req === void 0 ? void 0 : req.body)) {
+            res.sendStatus(400);
+            return;
+        }
+        const configuracion = yield (0, configuracion_1.ActualizarConfiguracion)(req.body);
+        res.status(200).json(configuracion);
+    }
+    catch (e) {
+        console.log(e);
+        res.sendStatus(500);
+    }
+});
+exports.RutaActualizarConfiguracion = RutaActualizarConfiguracion;

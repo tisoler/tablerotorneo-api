@@ -9,17 +9,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ActualizarEquipo = exports.ObtenerEquipos = void 0;
-const equipo_1 = require("../baseDatos/equipo");
-const ObtenerEquipos = () => __awaiter(void 0, void 0, void 0, function* () {
-    const equipos = yield (0, equipo_1.ObtenerEquiposBD)();
-    if (!(equipos === null || equipos === void 0 ? void 0 : equipos.length))
-        throw new Error('No hay equipos.');
-    return equipos;
+exports.Autenticar = void 0;
+const Autenticar = (payload) => __awaiter(void 0, void 0, void 0, function* () {
+    const { USUARIO, CLAVE } = process.env;
+    const { usuario, clave } = payload;
+    if (!USUARIO || !CLAVE)
+        throw new Error('No se han configurado USUARIO y/o CLAVE.');
+    if (!usuario || !clave)
+        throw new Error('No se enviaron usuario y/o clave.');
+    return USUARIO === usuario && CLAVE === clave;
 });
-exports.ObtenerEquipos = ObtenerEquipos;
-const ActualizarEquipo = (idEquipo, payload) => __awaiter(void 0, void 0, void 0, function* () {
-    yield (0, equipo_1.ActualizarEquipoBD)(idEquipo, payload);
-    return yield (0, exports.ObtenerEquipos)();
-});
-exports.ActualizarEquipo = ActualizarEquipo;
+exports.Autenticar = Autenticar;

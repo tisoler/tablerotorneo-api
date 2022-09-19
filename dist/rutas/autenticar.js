@@ -9,17 +9,19 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ActualizarEquipo = exports.ObtenerEquipos = void 0;
-const equipo_1 = require("../baseDatos/equipo");
-const ObtenerEquipos = () => __awaiter(void 0, void 0, void 0, function* () {
-    const equipos = yield (0, equipo_1.ObtenerEquiposBD)();
-    if (!(equipos === null || equipos === void 0 ? void 0 : equipos.length))
-        throw new Error('No hay equipos.');
-    return equipos;
+exports.RutaAutenticar = void 0;
+const autenticar_1 = require("../manejadores/autenticar");
+const RutaAutenticar = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const valido = yield (0, autenticar_1.Autenticar)(req.body);
+        if (valido)
+            res.status(200).json({ valido });
+        else
+            res.status(400).json({ valido });
+    }
+    catch (e) {
+        console.log(e);
+        res.sendStatus(500);
+    }
 });
-exports.ObtenerEquipos = ObtenerEquipos;
-const ActualizarEquipo = (idEquipo, payload) => __awaiter(void 0, void 0, void 0, function* () {
-    yield (0, equipo_1.ActualizarEquipoBD)(idEquipo, payload);
-    return yield (0, exports.ObtenerEquipos)();
-});
-exports.ActualizarEquipo = ActualizarEquipo;
+exports.RutaAutenticar = RutaAutenticar;

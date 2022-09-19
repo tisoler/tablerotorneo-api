@@ -9,31 +9,31 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.RutaActualizarEquipo = exports.RutaObtenerEquipos = void 0;
-const equipo_1 = require("../manejadores/equipo");
-const RutaObtenerEquipos = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.RutaActualizarCuadroFinal = exports.RutaObtenerCuadroFinal = void 0;
+const cuadroFinal_1 = require("../manejadores/cuadroFinal");
+const RutaObtenerCuadroFinal = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const equipos = yield (0, equipo_1.ObtenerEquipos)();
-        res.status(200).json(equipos);
+        const cuadroFinal = yield (0, cuadroFinal_1.ObtenerCuadroFinal)();
+        res.status(200).json(cuadroFinal);
     }
     catch (e) {
         console.log(e);
         res.sendStatus(500);
     }
 });
-exports.RutaObtenerEquipos = RutaObtenerEquipos;
-const RutaActualizarEquipo = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.RutaObtenerCuadroFinal = RutaObtenerCuadroFinal;
+const RutaActualizarCuadroFinal = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        if (!req.params.idEquipo && !(req === null || req === void 0 ? void 0 : req.body)) {
+        if (!(req === null || req === void 0 ? void 0 : req.body)) {
             res.sendStatus(400);
             return;
         }
-        const configuracion = yield (0, equipo_1.ActualizarEquipo)(parseInt(req.params.idEquipo), req.body);
-        res.status(200).json(configuracion);
+        const cuadroFinal = yield (0, cuadroFinal_1.ActualizarCuadroFinal)(req.body);
+        res.status(200).json(cuadroFinal);
     }
     catch (e) {
         console.log(e);
         res.sendStatus(500);
     }
 });
-exports.RutaActualizarEquipo = RutaActualizarEquipo;
+exports.RutaActualizarCuadroFinal = RutaActualizarCuadroFinal;

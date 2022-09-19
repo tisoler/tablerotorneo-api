@@ -12,14 +12,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ActualizarEquipoBD = exports.ObtenerEquiposBD = exports.ObtenerEquipoBD = void 0;
+exports.ActualizarCuadroFinalBD = exports.ObtenerCuadroFinalBD = void 0;
 const db_1 = __importDefault(require("./db"));
-const ObtenerEquipoBD = (idEquipo) => __awaiter(void 0, void 0, void 0, function* () {
+const ObtenerCuadroFinalBD = () => __awaiter(void 0, void 0, void 0, function* () {
     return new Promise((resolve, reject) => {
         const poolConexion = db_1.default.obtenerPoolConexion();
         if (!poolConexion)
             return reject('No hay conexión a la base de datos');
-        poolConexion.query(`SELECT * FROM equipo WHERE id = ${idEquipo}`, (error, elements) => {
+        poolConexion.query('SELECT * FROM cuadroFinal', (error, elements) => {
             if (error) {
                 return reject(error);
             }
@@ -27,29 +27,15 @@ const ObtenerEquipoBD = (idEquipo) => __awaiter(void 0, void 0, void 0, function
         });
     });
 });
-exports.ObtenerEquipoBD = ObtenerEquipoBD;
-const ObtenerEquiposBD = () => __awaiter(void 0, void 0, void 0, function* () {
-    return new Promise((resolve, reject) => {
-        const poolConexion = db_1.default.obtenerPoolConexion();
-        if (!poolConexion)
-            return reject('No hay conexión a la base de datos');
-        poolConexion.query(`SELECT * FROM equipo`, (error, elements) => {
-            if (error) {
-                return reject(error);
-            }
-            return resolve(elements);
-        });
-    });
-});
-exports.ObtenerEquiposBD = ObtenerEquiposBD;
-const ActualizarEquipoBD = (idEquipo, payload) => __awaiter(void 0, void 0, void 0, function* () {
+exports.ObtenerCuadroFinalBD = ObtenerCuadroFinalBD;
+const ActualizarCuadroFinalBD = (payload) => __awaiter(void 0, void 0, void 0, function* () {
     return new Promise((resolve, reject) => {
         var _a;
         const poolConexion = db_1.default.obtenerPoolConexion();
         if (!poolConexion)
             return reject('No hay conexión a la base de datos');
         const camposActualizar = (_a = Object.keys(payload)) === null || _a === void 0 ? void 0 : _a.map((campo) => `${campo} = ${payload[campo]}`);
-        poolConexion.query(`UPDATE equipo SET ${camposActualizar.join(', ')} WHERE id = ${idEquipo}`, (error, elements) => {
+        poolConexion.query(`UPDATE cuadroFinal SET ${camposActualizar.join(', ')}`, (error, elements) => {
             if (error) {
                 return reject(error);
             }
@@ -57,4 +43,4 @@ const ActualizarEquipoBD = (idEquipo, payload) => __awaiter(void 0, void 0, void
         });
     });
 });
-exports.ActualizarEquipoBD = ActualizarEquipoBD;
+exports.ActualizarCuadroFinalBD = ActualizarCuadroFinalBD;

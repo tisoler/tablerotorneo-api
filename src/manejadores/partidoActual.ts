@@ -172,7 +172,5 @@ export const ActualizarGame = async (payload: { suma: boolean, esEquipo1: boolea
 
   const payloadActualizar = await obtenerPayloadActualizacion(suma, esEquipo1)
 
-  await ActualizarPartidoActual(payloadActualizar)
-  
-  return await ObtenerPartidoActual()
+  return await ActualizarPartidoActual(payloadActualizar)
 }
