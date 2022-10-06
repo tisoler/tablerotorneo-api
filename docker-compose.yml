@@ -1,0 +1,23 @@
+version: "3"
+services:
+  
+  tablerotorneo-api:
+    build: ./Docker/app/.
+    volumes:
+      - ./src:/app/src/
+      - ./.env:/app/.env
+      - ./tsconfig.json:/app/tsconfig.json
+    depends_on:
+      - tablerotorneo-mysql
+    command: npm run dev
+
+  tablerotorneo-mysql:
+    build: ./Docker/database/.
+    restart: always
+    ports:
+      - 3306:3306
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=tablerotorneo
+      - MYSQL_USER=user
+      - MYSQL_PASSWORD=password
