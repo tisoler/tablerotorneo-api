@@ -7,13 +7,13 @@ export const RutaObtenerEquipos = async (req: Request, res: Response)=>{
     res.status(200).json(equipos)
   } catch(e) {
     console.log(e)
-    res.sendStatus(500)
+    res.status(400).send(e)
   }
 }
 
 export const RutaActualizarEquipo = async (req: Request, res: Response)=>{
   try {
-    if (!req.params.idEquipo && !req?.body) {
+    if (!req.params?.idEquipo && !req?.body) {
       res.sendStatus(400)
       return
     }
@@ -21,6 +21,6 @@ export const RutaActualizarEquipo = async (req: Request, res: Response)=>{
     res.status(200).json(configuracion)
   } catch(e) {
     console.log(e)
-    res.sendStatus(500)
+    res.status(400).send(e)
   }
 }

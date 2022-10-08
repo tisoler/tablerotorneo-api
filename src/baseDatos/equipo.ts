@@ -8,6 +8,8 @@ export interface EquipoDB {
   posicion: number,
   partidosJugados: number,
   partidosGanados: number,
+  diferenciaSets: number,
+  diferenciaGames: number,
 }
 
 export interface PayloadEquipo {

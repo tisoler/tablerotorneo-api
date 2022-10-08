@@ -3,9 +3,11 @@ import cors from 'cors'
 import dotenv from 'dotenv'
 import { RutaActualizarGame, RutaActualizarPartidoActual, RutaObtenerPartidoActual } from './rutas/partidoActual'
 import { RutaActualizarEquipo, RutaObtenerEquipos } from './rutas/equipo'
-import { RutaAutenticar } from './rutas/autenticar'
 import { RutaActualizarConfiguracion, RutaObtenerConfiguracion } from './rutas/configuracion'
 import { RutaActualizarCuadroFinal, RutaObtenerCuadroFinal } from './rutas/cuadroFinal'
+import { RutaRegistrarUsuario, RutaAutenticar } from './rutas/usuario'
+import verificarToken from './middlewares/verifcarToken'
+import { RutaObtenerDisciplinasClubes } from './rutas/disciplinaClub'
 
 dotenv.config()
 
@@ -17,16 +19,18 @@ const app: Express = express()
 app.use(express.json())
 const apiRouter: Router = express.Router()
 
+apiRouter.post('/registrar', RutaRegistrarUsuario)
 apiRouter.post('/autenticar', RutaAutenticar)
 apiRouter.get('/partidoActual', RutaObtenerPartidoActual)
-apiRouter.put('/partidoActual', RutaActualizarPartidoActual)
-apiRouter.put('/partidoActual/game', RutaActualizarGame)
+apiRouter.put('/partidoActual', verificarToken, RutaActualizarPartidoActual)
+apiRouter.put('/partidoActual/game', verificarToken, RutaActualizarGame)
 apiRouter.get('/equipos', RutaObtenerEquipos)
-apiRouter.put('/equipos/:idEquipo', RutaActualizarEquipo)
-apiRouter.get('/configuracion', RutaObtenerConfiguracion)
-apiRouter.put('/configuracion', RutaActualizarConfiguracion)
+apiRouter.put('/equipos/:idEquipo', verificarToken, RutaActualizarEquipo)
+apiRouter.get('/configuracion/:idDisciplinaClub', RutaObtenerConfiguracion)
+apiRouter.put('/configuracion/:idDisciplinaClub', verificarToken, RutaActualizarConfiguracion)
 apiRouter.get('/cuadroFinal', RutaObtenerCuadroFinal)
-apiRouter.put('/cuadroFinal', RutaActualizarCuadroFinal)
+apiRouter.put('/cuadroFinal', verificarToken, RutaActualizarCuadroFinal)
+apiRouter.get('/disciplinasClubes', RutaObtenerDisciplinasClubes)
 
 const corsOptions = {
 	origin: [FRONTEND_URL, 'http://localhost:3000'],

@@ -8,11 +8,11 @@ export interface PayloadConfiguracion {
   [clave: string]: number,
 }
 
-export const ObtenerConfiguracionBD = async (): Promise<ConfiguracionDB[]> => {
+export const ObtenerConfiguracionBD = async (idDisciplinaClub: number): Promise<ConfiguracionDB[]> => {
   return new Promise((resolve, reject)=> {
     const poolConexion = ConexionBaseDatos.obtenerPoolConexion()
     if (!poolConexion) return reject('No hay conexión a la base de datos')
-    poolConexion.query('SELECT * FROM configuracion', (error: any, elements: any)=> {
+    poolConexion.query(`SELECT c.* FROM configuracion as c INNER JOIN disciplinaClub as dc ON dc.idConfiguracion = c.id WHERE dc.id = ${idDisciplinaClub}`, (error: any, elements: any)=> {
       if(error){
         return reject(error)
       }

@@ -1,7 +1,7 @@
 import { ActualizarConfiguracionBD, ConfiguracionDB, ObtenerConfiguracionBD, PayloadConfiguracion } from "../baseDatos/configuracion"
 
-export const ObtenerConfiguracion = async (): Promise<ConfiguracionDB> => {
-  const resultado: ConfiguracionDB[] = await ObtenerConfiguracionBD()
+export const ObtenerConfiguracion = async (idDisciplinaClub: number): Promise<ConfiguracionDB> => {
+  const resultado: ConfiguracionDB[] = await ObtenerConfiguracionBD(idDisciplinaClub)
   if (!resultado?.length) throw new Error('No hay configuraión.')
 
   let configuracionDB = resultado[0]
@@ -9,8 +9,8 @@ export const ObtenerConfiguracion = async (): Promise<ConfiguracionDB> => {
   return configuracionDB
 }
 
-export const ActualizarConfiguracion = async (payload: PayloadConfiguracion): Promise<ConfiguracionDB> => {
+export const ActualizarConfiguracion = async (idDisciplinaClub: number, payload: PayloadConfiguracion): Promise<ConfiguracionDB> => {
   await ActualizarConfiguracionBD(payload)
 
-  return await ObtenerConfiguracion()
+  return await ObtenerConfiguracion(idDisciplinaClub)
 }
