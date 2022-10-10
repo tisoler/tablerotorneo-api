@@ -2,19 +2,18 @@ import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 import ConexionBaseDatos from './db'
 
-export interface UsuarioDB {
+export interface UsuarioBD {
   id: number,
   usuario: string,
   clave: string,
+  idDisciplinaClub: number,
+  idDisciplina: number,
 }
 
 export interface UsuarioResp {
-  usuario: {
-    id: number,
-    usuario: string,
-    idDisciplinaClub: number,
-  },
   token: string,
+  idDisciplinaClub: number,
+  idDisciplina: number,
 }
 
 export const RegistrarUsuarioBD = async (usuario: string, clave: string): Promise<number> => {
@@ -26,7 +25,7 @@ export const RegistrarUsuarioBD = async (usuario: string, clave: string): Promis
       if(error){
         return reject(error)
       }
-      const usuarioExistinte: UsuarioDB[] = elements
+      const usuarioExistinte: UsuarioBD[] = elements
       if (usuarioExistinte.length) {
         return reject('El usuario ya existe')
       }
@@ -49,7 +48,7 @@ export const AutenticarBD = async (usuario: string, clave: string): Promise<Usua
     if (!poolConexion) return reject('No hay conexión a la base de datos')
     
     poolConexion.query(`
-      SELECT u.*, dc.id as idDisciplinaClub
+      SELECT u.*, dc.idDisciplina, dc.id as idDisciplinaClub
       FROM usuario as u
       INNER JOIN disciplinaClub as dc ON dc.idUsuario = u.id
       WHERE u.usuario = '${usuario}'
@@ -58,7 +57,7 @@ export const AutenticarBD = async (usuario: string, clave: string): Promise<Usua
       if(error){
         return reject(error)
       }
-      const usuarios: UsuarioDB[] = elements
+      const usuarios: UsuarioBD[] = elements
       if (!usuarios.length) {
         return reject('No se puede autenticar')
       }
@@ -69,9 +68,14 @@ export const AutenticarBD = async (usuario: string, clave: string): Promise<Usua
         return reject('No se puede autenticar')
       }
 
-      const token = jwt.sign({ usuario: usuario.usuario, id: usuario.id }, process.env.TOKEN_SECRETO || '')
+      const token = jwt.sign({
+        usuario: usuario.usuario,
+        id: usuario.id,
+        idDisciplinaClub: usuario.idDisciplinaClub,
+        idDisciplina: usuario.idDisciplina,
+      }, process.env.TOKEN_SECRETO || '')
 
-      return resolve({ usuario, token })
+      return resolve({ token, idDisciplinaClub: usuario.idDisciplinaClub, idDisciplina: usuario.idDisciplina })
     })
   })
 }

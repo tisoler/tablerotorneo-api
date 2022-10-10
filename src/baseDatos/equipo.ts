@@ -29,11 +29,16 @@ export const ObtenerEquipoBD = async (idEquipo: number): Promise<EquipoDB[]> => 
   })
 }
 
-export const ObtenerEquiposBD = async (): Promise<EquipoDB[]> => {
+export const ObtenerEquiposBD = async (idDisciplinaClub: number): Promise<EquipoDB[]> => {
   return new Promise((resolve, reject)=> {
     const poolConexion = ConexionBaseDatos.obtenerPoolConexion()
     if (!poolConexion) return reject('No hay conexión a la base de datos')
-    poolConexion.query(`SELECT * FROM equipo`, (error: any, elements: any)=> {
+    poolConexion.query(`
+      SELECT e.* FROM equipo e
+      INNER JOIN torneoDisciplinaClub tdc ON tdc.id = e.idTorneoDisciplinaClub
+      INNER JOIN disciplinaClub dc ON dc.id = tdc.idDisciplinaClub
+      WHERE dc.id = ${idDisciplinaClub}
+    `, (error: any, elements: any)=> {
       if(error){
         return reject(error)
       }

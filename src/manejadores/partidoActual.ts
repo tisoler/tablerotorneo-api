@@ -1,8 +1,14 @@
-import { ActualizarPartidoActualBD, ObtenerPartidoActualBD, PartidoActualDB, PartidoActualDBConEquipos, PayloadPartidoActual } from '../baseDatos/partidoActual'
+import {
+  ActualizarPartidoActualBD,
+  ObtenerPartidoActualBD,
+  PartidoActualBD,
+  PartidoActualBDConEquipos,
+  PayloadPartidoActual,
+} from '../baseDatos/partidoActual'
 import { ObtenerEquipoBD, EquipoDB } from '../baseDatos/equipo'
 
-export const ObtenerPartidoActual = async (): Promise<PartidoActualDBConEquipos> => {
-  const resultado: PartidoActualDB[] = await ObtenerPartidoActualBD()
+export const ObtenerPartidoActual = async (): Promise<PartidoActualBDConEquipos> => {
+  const resultado: PartidoActualBD[] = await ObtenerPartidoActualBD()
   if (!resultado?.length) throw new Error('No hay partido actual.')
 
   let partidoActualDB = resultado[0]
@@ -21,13 +27,13 @@ export const ObtenerPartidoActual = async (): Promise<PartidoActualDBConEquipos>
   return partidoActual
 }
 
-export const ActualizarPartidoActual = async (payload: PayloadPartidoActual): Promise<PartidoActualDBConEquipos> => {
-  const actualizacion: PartidoActualDB[] = await ActualizarPartidoActualBD(payload)
+export const ActualizarPartidoActual = async (payload: PayloadPartidoActual): Promise<PartidoActualBDConEquipos> => {
+  const actualizacion: PartidoActualBD[] = await ActualizarPartidoActualBD(payload)
   
   return await ObtenerPartidoActual()
 }
 
-const procesarTieBreak = (puntajeActual: number, partidoActual: PartidoActualDBConEquipos, esEquipo1: boolean, suma: boolean) => {
+const procesarTieBreak = (puntajeActual: number, partidoActual: PartidoActualBDConEquipos, esEquipo1: boolean, suma: boolean) => {
   let puntajeGame = puntajeActual + (suma ? 1 : (puntajeActual > 0 ? -1 : 0))
   const puntajeEquipo1 = esEquipo1 ? puntajeGame : partidoActual.equipo1Game
   const puntajeEquipo2 = !esEquipo1 ? puntajeGame : partidoActual.equipo2Game
@@ -70,7 +76,7 @@ const procesarTieBreak = (puntajeActual: number, partidoActual: PartidoActualDBC
   }
 }
 
-const game = (partidoActual: PartidoActualDBConEquipos, esEquipo1: boolean) => {
+const game = (partidoActual: PartidoActualBDConEquipos, esEquipo1: boolean) => {
   let payloadGame = {}
   switch (partidoActual.setActual) {
     case 2:
@@ -167,7 +173,7 @@ const obtenerPayloadActualizacion = async (suma: boolean, esEquipo1: boolean) =>
   }
 }
 
-export const ActualizarGame = async (payload: { suma: boolean, esEquipo1: boolean }): Promise<PartidoActualDBConEquipos> => {
+export const ActualizarGame = async (payload: { suma: boolean, esEquipo1: boolean }): Promise<PartidoActualBDConEquipos> => {
   const { suma, esEquipo1 } = payload
 
   const payloadActualizar = await obtenerPayloadActualizacion(suma, esEquipo1)

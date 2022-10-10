@@ -10,7 +10,7 @@ export const ObtenerConfiguracion = async (idDisciplinaClub: number): Promise<Co
 }
 
 export const ActualizarConfiguracion = async (idDisciplinaClub: number, payload: PayloadConfiguracion): Promise<ConfiguracionDB> => {
-  await ActualizarConfiguracionBD(payload)
+  await ActualizarConfiguracionBD(idDisciplinaClub, payload)
 
   return await ObtenerConfiguracion(idDisciplinaClub)
 }

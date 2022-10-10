@@ -13,6 +13,10 @@ export const RutaObtenerPartidoActual = async (req: Request, res: Response)=>{
 
 export const RutaActualizarPartidoActual = async (req: Request, res: Response)=>{
   try {
+    if (!req.body) {
+      res.sendStatus(400)
+      return
+    }
     const partidoActual = await ActualizarPartidoActual(req.body)
     res.status(200).json(partidoActual)
   } catch(e) {
@@ -23,6 +27,10 @@ export const RutaActualizarPartidoActual = async (req: Request, res: Response)=>
 
 export const RutaActualizarGame = async (req: Request, res: Response)=>{
   try {
+    if (!req.body) {
+      res.sendStatus(400)
+      return
+    }
     const partidoActual = await ActualizarGame(req.body)
     res.status(200).json(partidoActual)
   } catch(e) {
