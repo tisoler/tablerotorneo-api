@@ -1,7 +1,7 @@
 import ConexionBaseDatos from './db'
 import { EquipoDB } from './equipo'
 
-export interface PartidoActualDB {
+export interface PartidoActualBD {
   idEquipo1: number,
   idEquipo2: number,
   equipo1Game: number,
@@ -18,7 +18,7 @@ export interface PartidoActualDB {
   tipoGame: 'game' | 'tie-break',
 }
 
-export type PartidoActualDBConEquipos = PartidoActualDB & {
+export type PartidoActualBDConEquipos = PartidoActualBD & {
   equipo1: EquipoDB,
   equipo2: EquipoDB,
 }
@@ -27,7 +27,7 @@ export interface PayloadPartidoActual {
   [clave: string]: number,
 }
 
-export const ObtenerPartidoActualBD = async (): Promise<PartidoActualDB[]> => {
+export const ObtenerPartidoActualBD = async (): Promise<PartidoActualBD[]> => {
   return new Promise((resolve, reject)=> {
     const poolConexion = ConexionBaseDatos.obtenerPoolConexion()
     if (!poolConexion) return reject('No hay conexión a la base de datos')
@@ -40,7 +40,7 @@ export const ObtenerPartidoActualBD = async (): Promise<PartidoActualDB[]> => {
   })
 }
 
-export const ActualizarPartidoActualBD = async (payload: PayloadPartidoActual): Promise<PartidoActualDB[]> => {
+export const ActualizarPartidoActualBD = async (payload: PayloadPartidoActual): Promise<PartidoActualBD[]> => {
   return new Promise((resolve, reject)=> {
     const poolConexion = ConexionBaseDatos.obtenerPoolConexion()
     if (!poolConexion) return reject('No hay conexión a la base de datos')

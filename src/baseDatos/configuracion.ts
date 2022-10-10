@@ -8,11 +8,11 @@ export interface PayloadConfiguracion {
   [clave: string]: number,
 }
 
-export const ObtenerConfiguracionBD = async (): Promise<ConfiguracionDB[]> => {
+export const ObtenerConfiguracionBD = async (idDisciplinaClub: number): Promise<ConfiguracionDB[]> => {
   return new Promise((resolve, reject)=> {
     const poolConexion = ConexionBaseDatos.obtenerPoolConexion()
     if (!poolConexion) return reject('No hay conexión a la base de datos')
-    poolConexion.query('SELECT * FROM configuracion', (error: any, elements: any)=> {
+    poolConexion.query(`SELECT c.* FROM configuracion as c INNER JOIN disciplinaClub as dc ON dc.idConfiguracion = c.id WHERE dc.id = ${idDisciplinaClub}`, (error: any, elements: any)=> {
       if(error){
         return reject(error)
       }
@@ -21,7 +21,7 @@ export const ObtenerConfiguracionBD = async (): Promise<ConfiguracionDB[]> => {
   })
 }
 
-export const ActualizarConfiguracionBD = async (payload: PayloadConfiguracion): Promise<ConfiguracionDB[]> => {
+export const ActualizarConfiguracionBD = async (idDisciplinaClub: number, payload: PayloadConfiguracion): Promise<ConfiguracionDB[]> => {
   return new Promise((resolve, reject)=> {
     const poolConexion = ConexionBaseDatos.obtenerPoolConexion()
     if (!poolConexion) return reject('No hay conexión a la base de datos')
@@ -30,7 +30,12 @@ export const ActualizarConfiguracionBD = async (payload: PayloadConfiguracion): 
       (campo: string) => `${campo} = '${payload[campo]}'`
     )
 
-    poolConexion.query(`UPDATE configuracion SET ${camposActualizar.join(', ')}`, (error: any, elements: any)=> {
+    poolConexion.query(`
+      UPDATE configuracion as c
+      INNER JOIN disciplinaClub as dc ON dc.idConfiguracion = c.id
+      SET ${camposActualizar.join(', ')}
+      WHERE dc.id = ${idDisciplinaClub}
+    `, (error: any, elements: any)=> {
       if(error){
         return reject(error)
       }

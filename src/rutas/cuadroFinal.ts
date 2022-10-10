@@ -8,7 +8,7 @@ export const RutaObtenerCuadroFinal = async (req: Request, res: Response)=>{
     res.status(200).json(cuadroFinal)
   } catch(e) {
     console.log(e)
-    res.sendStatus(500)
+    res.status(400).send(e)
   }
 }
 
@@ -22,6 +22,6 @@ export const RutaActualizarCuadroFinal = async (req: Request, res: Response)=>{
     res.status(200).json(cuadroFinal)
   } catch(e) {
     console.log(e)
-    res.sendStatus(500)
+    res.status(400).send(e)
   }
 }

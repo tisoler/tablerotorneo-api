@@ -7,26 +7,34 @@ export const RutaObtenerPartidoActual = async (req: Request, res: Response)=>{
     res.status(200).json(partidoActual)
   } catch(e) {
     console.log(e)
-    res.sendStatus(500)
+    res.status(400).send(e)
   }
 }
 
 export const RutaActualizarPartidoActual = async (req: Request, res: Response)=>{
   try {
+    if (!req.body) {
+      res.sendStatus(400)
+      return
+    }
     const partidoActual = await ActualizarPartidoActual(req.body)
     res.status(200).json(partidoActual)
   } catch(e) {
     console.log(e)
-    res.sendStatus(500)
+    res.status(400).send(e)
   }
 }
 
 export const RutaActualizarGame = async (req: Request, res: Response)=>{
   try {
+    if (!req.body) {
+      res.sendStatus(400)
+      return
+    }
     const partidoActual = await ActualizarGame(req.body)
     res.status(200).json(partidoActual)
   } catch(e) {
     console.log(e)
-    res.sendStatus(500)
+    res.status(400).send(e)
   }
 }
