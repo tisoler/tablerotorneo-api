@@ -45,8 +45,9 @@ export const ObtenerCuadroFinalBD = async (): Promise<CuadroFinalDB[]> => {
     const poolConexion = ConexionBaseDatos.obtenerPoolConexion()
     if (!poolConexion) return reject('No hay conexión a la base de datos')
     poolConexion.query('SELECT * FROM cuadroFinal', (error: any, elements: any)=> {
-      if(error){
-        return reject(error)
+      if (error){
+        console.log(error)
+        return reject('Error obteniendo cuadro final')
       }
       return resolve(elements)
     })
@@ -63,8 +64,9 @@ export const ActualizarCuadroFinalBD = async (payload: PayloadCuadroFinal): Prom
     )
 
     poolConexion.query(`UPDATE cuadroFinal SET ${camposActualizar.join(', ')}`, (error: any, elements: any)=> {
-      if(error){
-        return reject(error)
+      if (error){
+        console.log(error)
+        return reject('Error actualizando cuadro final')
       }
       return resolve(elements)
     })

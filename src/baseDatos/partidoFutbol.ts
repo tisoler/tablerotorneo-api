@@ -31,8 +31,9 @@ export const ObtenerPartidoFutbolActualBD = async (idDisciplinaClub: number): Pr
       INNER JOIN partidoFutbol as pf ON pf.idTorneoDisciplinaClub = tdc.id 
       WHERE tdc.idDisciplinaClub = ${idDisciplinaClub} AND tdc.activo = 1 AND pf.activo = 1
     `, (error: any, elements: any)=> {
-      if(error){
-        return reject(error)
+      if (error){
+        console.log(error)
+        return reject('Error obteniendo partido fútbol actual')
       }
       return resolve(elements)
     })
@@ -51,11 +52,11 @@ export const CrearPartidoFutbolActualBD = async (idDisciplinaClub: number, paylo
     poolConexion.query(
       `SELECT id FROM torneoDisciplinaClub WHERE idDisciplinaClub = ${idDisciplinaClub} and activo = 1`, 
     (error: any, elements: any)=> {
-      if(error){
+      if (error){
         return reject(error)
       }
       
-      if(!elements?.length) return reject('No hay torneos activos para esta disciplina y club.')
+      if (!elements?.length) return reject('No hay torneos activos para esta disciplina y club.')
       const idTorneoDisciplinaClub = elements[0]?.id
         
       // Remover el campo id
@@ -75,8 +76,9 @@ export const CrearPartidoFutbolActualBD = async (idDisciplinaClub: number, paylo
       valores.push(idTorneoDisciplinaClub)
 
       poolConexion.query(`INSERT INTO partidoFutbol (${campos.join(',')}) VALUES(${valores.join(', ')})`, (error: any, elements: any)=> {
-        if(error){
-          return reject(error)
+        if (error){
+          console.log(error)
+          return reject('Error creando partido fútbol actual')
         }
         return resolve(elements)
       })
@@ -104,8 +106,9 @@ export const ActualizarPartidoFutbolActualBD = async (idDisciplinaClub: number, 
       SET ${camposActualizar.join(', ')}
       WHERE pf.id = ${idPartidoFutbol} AND tdc.idDisciplinaClub = ${idDisciplinaClub}
     `, (error: any, elements: any)=> {
-      if(error){
-        return reject(error)
+      if (error){
+        console.log(error)
+        return reject('Error actualizando partido fútbol actual')
       }
       return resolve(elements)
     })
@@ -127,8 +130,9 @@ export const BorrarPartidoFutbolActualBD = async (idDisciplinaClub: number, idPa
       INNER JOIN torneoDisciplinaClub as tdc ON tdc.id = pf.idTorneoDisciplinaClub
       WHERE pf.id = ${idPartidoFutbol} AND tdc.idDisciplinaClub = ${idDisciplinaClub}
     `, (error: any, elements: any)=> {
-      if(error){
-        return reject(error)
+      if (error){
+        console.log(error)
+        return reject('Error eliminando partido fútbol actual')
       }
       return resolve(elements)
     })

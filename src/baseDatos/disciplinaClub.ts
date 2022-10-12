@@ -1,16 +1,17 @@
-import ConexionBaseDatos from "./db";
+import ConexionBaseDatos from "./db"
 
 export interface DisciplinaClubBD {
   id: number,
   idClub: number,
   nombreClub: string,
-  idDisciplina: number;
+  idDisciplina: number,
   nombreDisciplina: string,
   idLocalidad: number,
   nombreLocalidad: string,
   colorPrincipal: string,
   colorSecundario: string,
-  imagenEscudo: string;
+  imagenEscudo: string,
+  activo: number,
 }
 
 export const ObtenerDisciplinasClubesBD = async (): Promise<DisciplinaClubBD[]> => {
@@ -27,15 +28,18 @@ export const ObtenerDisciplinasClubesBD = async (): Promise<DisciplinaClubBD[]> 
         l.nombre as nombreLocalidad,
         c.colorPrincipal,
         c.colorSecundario,
-        c.imagenEscudo
+        c.imagenEscudo,
+        dc.activo
       FROM disciplinaClub as dc
       INNER JOIN club as c ON c.id = dc.idClub
       INNER JOIN disciplina as d ON d.id = dc.idDisciplina
       INNER JOIN localidad as l ON l.id = c.idLocalidad
+      WHERE dc.activo = true
     `,
     (error: any, elements: any)=> {
-      if(error){
-        return reject(error)
+      if (error){
+        console.log(error)
+        return reject('Error obteniendo disciplina club')
       }
       return resolve(elements)
     })

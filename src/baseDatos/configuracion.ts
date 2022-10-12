@@ -13,8 +13,9 @@ export const ObtenerConfiguracionBD = async (idDisciplinaClub: number): Promise<
     const poolConexion = ConexionBaseDatos.obtenerPoolConexion()
     if (!poolConexion) return reject('No hay conexión a la base de datos')
     poolConexion.query(`SELECT c.* FROM configuracion as c INNER JOIN disciplinaClub as dc ON dc.idConfiguracion = c.id WHERE dc.id = ${idDisciplinaClub}`, (error: any, elements: any)=> {
-      if(error){
-        return reject(error)
+      if (error){
+        console.log(error)
+        return reject('Error obteniendo configuración')
       }
       return resolve(elements)
     })
@@ -36,8 +37,9 @@ export const ActualizarConfiguracionBD = async (idDisciplinaClub: number, payloa
       SET ${camposActualizar.join(', ')}
       WHERE dc.id = ${idDisciplinaClub}
     `, (error: any, elements: any)=> {
-      if(error){
-        return reject(error)
+      if (error){
+        console.log(error)
+        return reject('Error actualizando configuración')
       }
       return resolve(elements)
     })

@@ -22,8 +22,9 @@ export const RegistrarUsuarioBD = async (usuario: string, clave: string): Promis
     if (!poolConexion) return reject('No hay conexión a la base de datos')
 
     poolConexion.query(`SELECT * FROM usuario WHERE usuario = '${usuario}'`, async (error: any, elements: any) => {
-      if(error){
-        return reject(error)
+      if (error){
+        console.log(error)
+        return reject('Error obteniendo usuario')
       }
       const usuarioExistinte: UsuarioBD[] = elements
       if (usuarioExistinte.length) {
@@ -35,6 +36,10 @@ export const RegistrarUsuarioBD = async (usuario: string, clave: string): Promis
       poolConexion.query(
         `INSERT INTO usuario (usuario, clave) VALUES('${usuario}', '${claveEncriptada}')`,
         (error: any, elements: any) => {
+          if (error){
+            console.log(error)
+            return reject('Error registrando usuario')
+          }
           return resolve(elements.insertId)
         }
       )
@@ -54,8 +59,9 @@ export const AutenticarBD = async (usuario: string, clave: string): Promise<Usua
       WHERE u.usuario = '${usuario}'
       `, async (error: any, elements: any) => {
 
-      if(error){
-        return reject(error)
+      if (error){
+        console.log(error)
+        return reject('Error obteniendo usuario')
       }
       const usuarios: UsuarioBD[] = elements
       if (!usuarios.length) {

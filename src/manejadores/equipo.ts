@@ -8,7 +8,7 @@ export const ObtenerEquipos = async (idDisciplinaClub: number) => {
 }
 
 export const ActualizarEquipo = async (idDisciplinaClub: number, idEquipo: number, payload: PayloadEquipo): Promise<EquipoDB[]> => {
-  await ActualizarEquipoBD(idEquipo, payload)
+  await ActualizarEquipoBD(idDisciplinaClub, idEquipo, payload)
 
   return await ObtenerEquipos(idDisciplinaClub)
 }

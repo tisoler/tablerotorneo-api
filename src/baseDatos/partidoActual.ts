@@ -32,8 +32,9 @@ export const ObtenerPartidoActualBD = async (): Promise<PartidoActualBD[]> => {
     const poolConexion = ConexionBaseDatos.obtenerPoolConexion()
     if (!poolConexion) return reject('No hay conexión a la base de datos')
     poolConexion.query('SELECT * FROM partidoActual', (error: any, elements: any)=> {
-      if(error){
-        return reject(error)
+      if (error){
+        console.log(error)
+        return reject('Error obteniendo partido actual')
       }
       return resolve(elements)
     })
@@ -50,8 +51,9 @@ export const ActualizarPartidoActualBD = async (payload: PayloadPartidoActual): 
     )
 
     poolConexion.query(`UPDATE partidoActual SET ${camposActualizar.join(', ')}`, (error: any, elements: any)=> {
-      if(error){
-        return reject(error)
+      if (error){
+        console.log(error)
+        return reject('Error actualizando partido actual')
       }
       return resolve(elements)
     })

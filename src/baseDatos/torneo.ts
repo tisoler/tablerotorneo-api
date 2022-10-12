@@ -19,8 +19,9 @@ export const ObtenerTorneoActualBD = async (idDisciplinaClub: number): Promise<T
       INNER JOIN club as c ON c.id = dc.idClub
       WHERE tdc.idDisciplinaClub = ${idDisciplinaClub}
     `, (error: any, elements: any)=> {
-      if(error){
-        return reject(error)
+      if (error){
+        console.log(error)
+        return reject('Error obteniendo torneo actual')
       }
       return resolve(elements)
     })
