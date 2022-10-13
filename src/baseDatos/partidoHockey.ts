@@ -11,8 +11,11 @@ export interface PartidoHockeyBD {
   idEquipoVisitante: number,
   golesEquipoLocal: number,
   golesEquipoVisitante: number,
-  fecha: Date,
-  numeroTiempo: number,
+  inicioPrimerCuarto: string,
+  inicioSegundoCuarto: string,
+  inicioTercerCuarto: string,
+  inicioCuartoCuarto: string,
+  numeroCuarto: number,
   idTorneoDisciplinaClub: number,
   activo: boolean,
 }
@@ -20,6 +23,10 @@ export interface PartidoHockeyBD {
 export type PartidoHockeyBDConEquipos = PartidoHockeyBD & {
   equipoLocal: EquipoDB,
   equipoVisitante: EquipoDB,
+  minutosPrimerCuarto?: number,
+  minutosSegundoCuarto?: number,
+  minutosTercerCuarto?: number,
+  minutosCuartoCuarto?: number,
 }
 
 export const ObtenerPartidoHockeyActualBD = async (idDisciplinaClub: number): Promise<PartidoHockeyBD[]> => {
@@ -69,7 +76,7 @@ export const CrearPartidoHockeyActualBD = async (idDisciplinaClub: number, paylo
         (campo: string) => campo
       )
       const valores = Object.keys(payload)?.map(
-        (campo: string) => payload[campo]
+        (campo: string) => ['inicioPrimerCuarto', 'inicioSegundoCuarto', 'inicioTercerCuarto', 'inicioCuartoCuarto'].includes(campo) ? `'${payload[campo]}'` : payload[campo]
       )
 
       // Agregar idTorneoDisciplinaClub
@@ -97,7 +104,7 @@ export const ActualizarPartidoHockeyActualBD = async (idDisciplinaClub: number, 
     if (!poolConexion) return reject('No hay conexión a la base de datos')
 
     const camposActualizar = Object.keys(payload)?.map(
-      (campo: string) => `ph.${campo} = ${payload[campo]}`
+      (campo: string) => ['inicioPrimerCuarto', 'inicioSegundoCuarto', 'inicioTercerCuarto', 'inicioCuartoCuarto'].includes(campo) ? `ph.${campo} = '${payload[campo]}'` : `ph.${campo} = ${payload[campo]}`
     )
 
     // Validamos acceso con idDisciplinaClub

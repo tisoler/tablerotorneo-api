@@ -17,7 +17,8 @@ export default class ConexionBaseDatos {
         user: BASE_DATOS_USUARIO,
         database: BASE_DATOS,
         host: BASE_DATOS_HOST || 'localhost',
-        port: BASE_DATOS_PORT ? parseInt(BASE_DATOS_PORT) : 3306
+        port: BASE_DATOS_PORT ? parseInt(BASE_DATOS_PORT) : 3306,
+        dateStrings: true,
       })
     }
 

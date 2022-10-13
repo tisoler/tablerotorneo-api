@@ -23,10 +23,28 @@ export const ObtenerPartidoHockeyActual = async (idDisciplinaClub: number): Prom
 
   if (!resultadoEquipoLocal?.length || !resultadoEquipoVisitante?.length) throw new Error('No hay equipo 1 ó 2 en el partido de fútbol actual.')
 
+  const ahora = new Date()
+  const minutosPrimerCuarto = partidoActualDB.inicioPrimerCuarto
+    ? Math.trunc(Math.abs((ahora.getTime() - new Date(`${partidoActualDB.inicioPrimerCuarto.replace(' ', 'T')}Z`).getTime()) / 60000))
+    : 0
+  const minutosSegundoCuarto = partidoActualDB.inicioSegundoCuarto
+    ? Math.trunc(Math.abs((ahora.getTime() - new Date(`${partidoActualDB.inicioSegundoCuarto.replace(' ', 'T')}Z`).getTime()) / 60000))
+    : 0
+  const minutosTercerCuarto = partidoActualDB.inicioTercerCuarto
+    ? Math.trunc(Math.abs((ahora.getTime() - new Date(`${partidoActualDB.inicioTercerCuarto.replace(' ', 'T')}Z`).getTime()) / 60000))
+    : 0
+  const minutosCuartoCuarto = partidoActualDB.inicioCuartoCuarto
+    ? Math.trunc(Math.abs((ahora.getTime() - new Date(`${partidoActualDB.inicioCuartoCuarto.replace(' ', 'T')}Z`).getTime()) / 60000))
+    : 0
+
   const partidoHockeyActual = {
     ...partidoActualDB,
     equipoLocal: resultadoEquipoLocal[0],
     equipoVisitante: resultadoEquipoVisitante[0],
+    minutosPrimerCuarto,
+    minutosSegundoCuarto,
+    minutosTercerCuarto,
+    minutosCuartoCuarto,
   }
 
   return partidoHockeyActual

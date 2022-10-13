@@ -11,7 +11,8 @@ export interface PartidoFutbolBD {
   idEquipoVisitante: number,
   golesEquipoLocal: number,
   golesEquipoVisitante: number,
-  fecha: Date,
+  inicioPrimerTiempo: string,
+  inicioSegundoTiempo: string,
   numeroTiempo: number,
   idTorneoDisciplinaClub: number,
   activo: boolean,
@@ -20,6 +21,8 @@ export interface PartidoFutbolBD {
 export type PartidoFutbolBDConEquipos = PartidoFutbolBD & {
   equipoLocal: EquipoDB,
   equipoVisitante: EquipoDB,
+  minutosPrimerTiempo?: number,
+  minutosSegundoTiempo?: number,
 }
 
 export const ObtenerPartidoFutbolActualBD = async (idDisciplinaClub: number): Promise<PartidoFutbolBD[]> => {
@@ -28,7 +31,7 @@ export const ObtenerPartidoFutbolActualBD = async (idDisciplinaClub: number): Pr
     if (!poolConexion) return reject('No hay conexión a la base de datos')
     poolConexion.query(`
       SELECT pf.* FROM torneoDisciplinaClub as tdc
-      INNER JOIN partidoFutbol as pf ON pf.idTorneoDisciplinaClub = tdc.id 
+      INNER JOIN partidoFutbol as pf ON pf.idTorneoDisciplinaClub = tdc.id
       WHERE tdc.idDisciplinaClub = ${idDisciplinaClub} AND tdc.activo = 1 AND pf.activo = 1
     `, (error: any, elements: any)=> {
       if (error){
@@ -68,7 +71,7 @@ export const CrearPartidoFutbolActualBD = async (idDisciplinaClub: number, paylo
         (campo: string) => campo
       )
       const valores = Object.keys(payload)?.map(
-        (campo: string) => payload[campo]
+        (campo: string) => ['inicioPrimerTiempo', 'inicioSegundoTiempo'].includes(campo) ? `'${payload[campo]}'` : payload[campo]
       )
 
       // Agregar idTorneoDisciplinaClub
@@ -96,7 +99,7 @@ export const ActualizarPartidoFutbolActualBD = async (idDisciplinaClub: number, 
     if (!poolConexion) return reject('No hay conexión a la base de datos')
 
     const camposActualizar = Object.keys(payload)?.map(
-      (campo: string) => `pf.${campo} = ${payload[campo]}`
+      (campo: string) => ['inicioPrimerTiempo', 'inicioSegundoTiempo'].includes(campo) ? `pf.${campo} = '${payload[campo]}'` : `pf.${campo} = ${payload[campo]}`
     )
 
     // Validamos acceso con idDisciplinaClub

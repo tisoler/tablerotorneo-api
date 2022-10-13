@@ -11,6 +11,7 @@ export interface EquipoDB {
   diferenciaSets: number,
   diferenciaGames: number,
   puntos: number,
+  imagenEscudo: string,
 }
 
 export interface PayloadEquipo {

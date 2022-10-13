@@ -11,6 +11,7 @@ import { ObtenerEquipoBD, EquipoDB } from '../baseDatos/equipo'
 
 export const ObtenerPartidoFutbolActual = async (idDisciplinaClub: number): Promise<PartidoFutbolBDConEquipos | null> => {
   const resultado: PartidoFutbolBD[] = await ObtenerPartidoFutbolActualBD(idDisciplinaClub)
+
   if (!resultado?.length) {
     console.log('No hay partido de fútbol actual')
     return null
@@ -23,10 +24,20 @@ export const ObtenerPartidoFutbolActual = async (idDisciplinaClub: number): Prom
 
   if (!resultadoEquipoLocal?.length || !resultadoEquipoVisitante?.length) throw new Error('No hay equipo 1 ó 2 en el partido de fútbol actual.')
 
+  const ahora = new Date()
+  const minutosPrimerTiempo = partidoActualDB.inicioPrimerTiempo
+    ? Math.trunc(Math.abs((ahora.getTime() - new Date(`${partidoActualDB.inicioPrimerTiempo.replace(' ', 'T')}Z`).getTime()) / 60000))
+    : 0
+  const minutosSegundoTiempo = partidoActualDB.inicioSegundoTiempo
+    ? Math.trunc(Math.abs((ahora.getTime() - new Date(`${partidoActualDB.inicioSegundoTiempo.replace(' ', 'T')}Z`).getTime()) / 60000))
+    : 0
+
   const partidoFutbolActual = {
     ...partidoActualDB,
     equipoLocal: resultadoEquipoLocal[0],
     equipoVisitante: resultadoEquipoVisitante[0],
+    minutosPrimerTiempo,
+    minutosSegundoTiempo,
   }
 
   return partidoFutbolActual
