@@ -18,6 +18,6 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Buildear imagen
-        run: docker build . --tag ghcr.io/egnuez/tablerotorneo-api:latest
+        run: docker build . --tag ghcr.io/tisoler/tablerotorneo-api:latest
       - name: Pushear imagen
-        run: docker push ghcr.io/egnuez/tablerotorneo-api:latest
+        run: docker push ghcr.io/tisoler/tablerotorneo-api:latest
