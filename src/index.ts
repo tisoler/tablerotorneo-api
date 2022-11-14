@@ -4,7 +4,7 @@ import dotenv from 'dotenv'
 import { RutaActualizarGame, RutaActualizarPartidoActual, RutaObtenerPartidoActual } from './rutas/partidoActual'
 import { RutaActualizarEquipo, RutaObtenerEquipos } from './rutas/equipo'
 import { RutaActualizarConfiguracion, RutaObtenerConfiguracion } from './rutas/configuracion'
-import { RutaActualizarCuadroFinal, RutaObtenerCuadroFinal } from './rutas/cuadroFinal'
+import { RutaCrearActualizarCuadroFinal, RutaObtenerCuadroFinalActual } from './rutas/cuadroFinal'
 import { RutaRegistrarUsuario, RutaAutenticar } from './rutas/usuario'
 import verificarToken from './middlewares/verifcarToken'
 import { RutaObtenerDisciplinasClubes } from './rutas/disciplinaClub'
@@ -48,8 +48,9 @@ apiRouter.put('/equipos/:idEquipo', verificarToken, RutaActualizarEquipo)
 apiRouter.get('/configuracion/:idDisciplinaClub', RutaObtenerConfiguracion)
 apiRouter.put('/configuracion', verificarToken, RutaActualizarConfiguracion)
 
-apiRouter.get('/cuadroFinal', RutaObtenerCuadroFinal)
-apiRouter.put('/cuadroFinal', verificarToken, RutaActualizarCuadroFinal)
+apiRouter.get('/cuadroFinalActual/:idDisciplinaClub', RutaObtenerCuadroFinalActual)
+apiRouter.get('/cuadroFinalActual', verificarToken, RutaObtenerCuadroFinalActual)
+apiRouter.post('/cuadroFinalActual', verificarToken, RutaCrearActualizarCuadroFinal)
 
 apiRouter.get('/disciplinasClubes', RutaObtenerDisciplinasClubes)
 

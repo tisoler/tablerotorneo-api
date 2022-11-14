@@ -1,10 +1,15 @@
-import { Request, Response } from 'express'
-import { ActualizarCuadroFinal, ObtenerCuadroFinal } from '../manejadores/cuadroFinal'
+import { Response } from 'express'
+import { CrearActualizarCuadroFinal, ObtenerCuadroFinalActual } from '../manejadores/cuadroFinal'
+import { RequestConUsuario } from '../middlewares/verifcarToken'
 
-
-export const RutaObtenerCuadroFinal = async (req: Request, res: Response)=>{
+export const RutaObtenerCuadroFinalActual = async (req: RequestConUsuario, res: Response)=>{
   try {
-    const cuadroFinal = await ObtenerCuadroFinal()
+    if (!req.params?.idDisciplinaClub && !req?.usuario?.idDisciplinaClub || req.params?.idDisciplinaClub && isNaN(Number(req.params.idDisciplinaClub))) {
+      res.sendStatus(400)
+      return
+    }
+    const idDisciplinaClub = req.params?.idDisciplinaClub ? parseInt(req.params.idDisciplinaClub) : req?.usuario?.idDisciplinaClub
+    const cuadroFinal = await ObtenerCuadroFinalActual(idDisciplinaClub || -1)
     res.status(200).json(cuadroFinal)
   } catch(e) {
     console.log(e)
@@ -12,13 +17,14 @@ export const RutaObtenerCuadroFinal = async (req: Request, res: Response)=>{
   }
 }
 
-export const RutaActualizarCuadroFinal = async (req: Request, res: Response)=>{
+export const RutaCrearActualizarCuadroFinal = async (req: RequestConUsuario, res: Response)=>{
   try {
-    if (!req?.body) {
+    if (!req?.body || !req?.usuario?.idDisciplinaClub) {
       res.sendStatus(400)
       return
     }
-    const cuadroFinal = await ActualizarCuadroFinal(req.body)
+    const idDisciplinaClub = req.params?.idDisciplinaClub ? parseInt(req.params.idDisciplinaClub) : req?.usuario?.idDisciplinaClub
+    const cuadroFinal = await CrearActualizarCuadroFinal(idDisciplinaClub || -1, req.body)
     res.status(200).json(cuadroFinal)
   } catch(e) {
     console.log(e)

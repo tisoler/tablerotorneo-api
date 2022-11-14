@@ -1,4 +1,4 @@
-import { Request, Response } from 'express'
+import { Response } from 'express'
 import { ActualizarEquipo, ObtenerEquipos } from '../manejadores/equipo'
 import { RequestConUsuario } from '../middlewares/verifcarToken'
 
