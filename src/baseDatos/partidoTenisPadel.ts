@@ -147,8 +147,7 @@ export const BorrarPartidoTenisPadelBD = async (idTorneo: number, idPartidoTenis
 
     // Validamos acceso con idTorneo
     poolConexion.query(`
-      DELETE * FROM partidoTenisPadel
-      WHERE id = ${idPartidoTenisPadel} AND idTorneoDisciplinaClub = ${idTorneo}
+      DELETE FROM partidoTenisPadel WHERE id = ${idPartidoTenisPadel} AND idTorneoDisciplinaClub = ${idTorneo}
     `, (error: any, elements: any)=> {
       if (error){
         console.log(error)
