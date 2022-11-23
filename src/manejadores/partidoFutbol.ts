@@ -9,8 +9,8 @@ import {
 } from '../baseDatos/partidoFutbol'
 import { ObtenerEquipoBD, EquipoDB } from '../baseDatos/equipo'
 
-export const ObtenerPartidoFutbolActual = async (idDisciplinaClub: number): Promise<PartidoFutbolBDConEquipos | null> => {
-  const resultado: PartidoFutbolBD[] = await ObtenerPartidoFutbolActualBD(idDisciplinaClub)
+export const ObtenerPartidoFutbolActual = async (idTorneo: number): Promise<PartidoFutbolBDConEquipos | null> => {
+  const resultado: PartidoFutbolBD[] = await ObtenerPartidoFutbolActualBD(idTorneo)
 
   if (!resultado?.length) {
     console.log('No hay partido de fútbol actual')
@@ -43,20 +43,20 @@ export const ObtenerPartidoFutbolActual = async (idDisciplinaClub: number): Prom
   return partidoFutbolActual
 }
 
-export const CrearPartidoFutbolActual = async (idDisciplinaClub: number, payload: PayloadPartidoActual): Promise<PartidoFutbolBDConEquipos | null> => {
-  const actualizacion: PartidoFutbolBD[] = await CrearPartidoFutbolActualBD(idDisciplinaClub, payload)
+export const CrearPartidoFutbolActual = async (idTorneo: number, payload: PayloadPartidoActual): Promise<PartidoFutbolBDConEquipos | null> => {
+  const actualizacion: PartidoFutbolBD[] = await CrearPartidoFutbolActualBD(idTorneo, payload)
   
-  return await ObtenerPartidoFutbolActual(idDisciplinaClub)
+  return await ObtenerPartidoFutbolActual(idTorneo)
 }
 
-export const ActualizarPartidoFutbolActual = async (idDisciplinaClub: number, idPartidoFutbol: number, payload: PayloadPartidoActual): Promise<PartidoFutbolBDConEquipos | null> => {
-  const actualizacion: PartidoFutbolBD[] = await ActualizarPartidoFutbolActualBD(idDisciplinaClub, idPartidoFutbol, payload)
+export const ActualizarPartidoFutbolActual = async (idTorneo: number, idPartidoFutbol: number, payload: PayloadPartidoActual): Promise<PartidoFutbolBDConEquipos | null> => {
+  const actualizacion: PartidoFutbolBD[] = await ActualizarPartidoFutbolActualBD(idTorneo, idPartidoFutbol, payload)
   
-  return await ObtenerPartidoFutbolActual(idDisciplinaClub)
+  return await ObtenerPartidoFutbolActual(idTorneo)
 }
 
-export const BorrarPartidoFutbolActual = async (idDisciplinaClub: number, idPartidoFutbol: number, payload: PayloadPartidoActual): Promise<PartidoFutbolBDConEquipos | null> => {
-  const actualizacion: PartidoFutbolBD[] = await BorrarPartidoFutbolActualBD(idDisciplinaClub, idPartidoFutbol, payload)
+export const BorrarPartidoFutbolActual = async (idTorneo: number, idPartidoFutbol: number, payload: PayloadPartidoActual): Promise<PartidoFutbolBDConEquipos | null> => {
+  const actualizacion: PartidoFutbolBD[] = await BorrarPartidoFutbolActualBD(idTorneo, idPartidoFutbol, payload)
   
   return null
 }

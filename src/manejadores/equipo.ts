@@ -1,14 +1,17 @@
-import { ObtenerEquiposBD, EquipoDB, ActualizarEquipoBD, PayloadEquipo } from '../baseDatos/equipo'
+import { ObtenerEquiposParaTorneoBD, EquipoDB, ActualizarEquipoBD, PayloadEquipo } from '../baseDatos/equipo'
 
-export const ObtenerEquipos = async (idDisciplinaClub: number) => {
-  const equipos: EquipoDB[] = await ObtenerEquiposBD(idDisciplinaClub)
-  if (!equipos?.length) throw new Error('No hay equipos.')
+export const ObtenerEquiposParaTorneo = async (idTorneo: number): Promise<EquipoDB[]> => {
+  const equipos: EquipoDB[] = await ObtenerEquiposParaTorneoBD(idTorneo)
+  if (!equipos?.length) {
+    console.log(`No hay equipos para el torneo ${idTorneo}.`)
+    return []
+  }
 
   return equipos
 }
 
-export const ActualizarEquipo = async (idDisciplinaClub: number, idEquipo: number, payload: PayloadEquipo): Promise<EquipoDB[]> => {
-  await ActualizarEquipoBD(idDisciplinaClub, idEquipo, payload)
+export const ActualizarEquipo = async (idTorneo: number, idEquipo: number, payload: PayloadEquipo): Promise<EquipoDB[]> => {
+  await ActualizarEquipoBD(idTorneo, idEquipo, payload)
 
-  return await ObtenerEquipos(idDisciplinaClub)
+  return await ObtenerEquiposParaTorneo(idTorneo)
 }

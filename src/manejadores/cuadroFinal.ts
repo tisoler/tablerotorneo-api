@@ -8,8 +8,8 @@ import {
 } from "../baseDatos/cuadroFinal"
 import { EquipoDB, ObtenerEquipoBD } from "../baseDatos/equipo"
 
-export const ObtenerCuadroFinalActual = async (idDisciplinaClub: number): Promise<CuadroFinalConEquipos | null> => {
-  const resultado: CuadroFinalDB[] = await ObtenerCuadroFinalActualBD(idDisciplinaClub)
+export const ObtenerCuadroFinalParaTorneo = async (idTorneo: number): Promise<CuadroFinalConEquipos | null> => {
+  const resultado: CuadroFinalDB[] = await ObtenerCuadroFinalActualBD(idTorneo)
   if (!resultado?.length) {
     console.log('No hay cuadro final actual para el torneo.')
     return null
@@ -86,14 +86,14 @@ export const ObtenerCuadroFinalActual = async (idDisciplinaClub: number): Promis
   return cuadroFinal
 }
 
-export const CrearActualizarCuadroFinal = async (idDisciplinaClub: number, payload: PayloadCuadroFinal): Promise<CuadroFinalConEquipos | null> => {
-  const cuadroFinal = await ObtenerCuadroFinalActual(idDisciplinaClub)
+export const CrearActualizarCuadroFinalParaTorneo = async (idTorneo: number, payload: PayloadCuadroFinal): Promise<CuadroFinalConEquipos | null> => {
+  const cuadroFinal = await ObtenerCuadroFinalParaTorneo(idTorneo)
 
   if (!cuadroFinal) {
-    await CrearCuadroFinalBD(idDisciplinaClub, payload)
+    await CrearCuadroFinalBD(idTorneo, payload)
   } else {
-    await ActualizarCuadroFinalBD(idDisciplinaClub, payload)
+    await ActualizarCuadroFinalBD(idTorneo, payload)
   }
 
-  return await ObtenerCuadroFinalActual(idDisciplinaClub)
+  return await ObtenerCuadroFinalParaTorneo(idTorneo)
 }

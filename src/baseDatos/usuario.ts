@@ -8,12 +8,14 @@ export interface UsuarioBD {
   clave: string,
   idDisciplinaClub: number,
   idDisciplina: number,
+  idTorneo: number,
 }
 
 export interface UsuarioResp {
   token: string,
   idDisciplinaClub: number,
   idDisciplina: number,
+  idTorneo: number,
 }
 
 export const RegistrarUsuarioBD = async (usuario: string, clave: string): Promise<number> => {
@@ -53,9 +55,10 @@ export const AutenticarBD = async (usuario: string, clave: string): Promise<Usua
     if (!poolConexion) return reject('No hay conexión a la base de datos')
     
     poolConexion.query(`
-      SELECT u.*, dc.idDisciplina, dc.id as idDisciplinaClub
+      SELECT u.*, dc.idDisciplina, dc.id as idDisciplinaClub, tdc.id as idTorneo
       FROM usuario as u
       INNER JOIN disciplinaClub as dc ON dc.idUsuario = u.id
+      LEFT JOIN torneoDisciplinaClub as tdc ON tdc.idDisciplinaClub = dc.id and tdc.activo = true
       WHERE u.usuario = '${usuario}'
       `, async (error: any, elements: any) => {
 
@@ -79,9 +82,15 @@ export const AutenticarBD = async (usuario: string, clave: string): Promise<Usua
         id: usuario.id,
         idDisciplinaClub: usuario.idDisciplinaClub,
         idDisciplina: usuario.idDisciplina,
+        idTorneo: usuario.idTorneo,
       }, process.env.TOKEN_SECRETO || '')
 
-      return resolve({ token, idDisciplinaClub: usuario.idDisciplinaClub, idDisciplina: usuario.idDisciplina })
+      return resolve({
+        token,
+        idDisciplinaClub: usuario.idDisciplinaClub,
+        idDisciplina: usuario.idDisciplina,
+        idTorneo: usuario.idTorneo
+      })
     })
   })
 }

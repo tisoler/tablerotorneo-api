@@ -3,7 +3,7 @@ import { ActualizarConfiguracion, ObtenerConfiguracion } from "../manejadores/co
 import { RequestConUsuario } from '../middlewares/verifcarToken'
 
 
-export const RutaObtenerConfiguracion = async (req: Request, res: Response)=>{
+export const RutaObtenerConfiguracion = async (req: Request, res: Response) => {
   try {
     if (!req.params?.idDisciplinaClub || isNaN(Number(req.params.idDisciplinaClub))) {
       res.sendStatus(400)
@@ -17,7 +17,7 @@ export const RutaObtenerConfiguracion = async (req: Request, res: Response)=>{
   }
 }
 
-export const RutaActualizarConfiguracion = async (req: RequestConUsuario, res: Response)=>{
+export const RutaActualizarConfiguracion = async (req: RequestConUsuario, res: Response) => {
   try {
     if (!req.usuario?.idDisciplinaClub || !req?.body) {
       res.sendStatus(400)

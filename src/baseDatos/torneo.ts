@@ -1,27 +1,29 @@
 import ConexionBaseDatos from './db'
 
 export interface TorneoBD {
+  id?: number,
   iniciales?: string,
   nombreMostrar?: string,
   sponsor?: string,
   imagenSponsor?: string,
   imagenEscudo?: string,
   colorFondoSponsor?: string,
+  activo?: boolean,
 }
 
-export const ObtenerTorneoActualBD = async (idDisciplinaClub: number): Promise<TorneoBD[]> => {
+export const ObtenerTorneosBD = async (idDisciplinaClub: number): Promise<TorneoBD[]> => {
   return new Promise((resolve, reject)=> {
     const poolConexion = ConexionBaseDatos.obtenerPoolConexion()
     if (!poolConexion) return reject('No hay conexión a la base de datos')
     poolConexion.query(`
-      SELECT tdc.iniciales, tdc.nombreMostrar, tdc.sponsor, tdc.imagenSponsor, tdc.colorFondoSponsor, c.imagenEscudo FROM torneoDisciplinaClub as tdc
+      SELECT tdc.id, tdc.iniciales, tdc.nombreMostrar, tdc.sponsor, tdc.imagenSponsor, tdc.colorFondoSponsor, tdc.activo, c.imagenEscudo FROM torneoDisciplinaClub as tdc
       INNER JOIN disciplinaClub as dc ON dc.id = tdc.idDisciplinaClub
       INNER JOIN club as c ON c.id = dc.idClub
       WHERE tdc.idDisciplinaClub = ${idDisciplinaClub}
     `, (error: any, elements: any)=> {
       if (error){
         console.log(error)
-        return reject('Error obteniendo torneo actual')
+        return reject('Error obteniendo torneos para la disciplina y club.')
       }
       return resolve(elements)
     })

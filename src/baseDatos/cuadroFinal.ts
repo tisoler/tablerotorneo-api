@@ -36,24 +36,6 @@ export interface CuadroFinalDB {
   activo: boolean,
 }
 
-export interface CuadroFinalDB {
-  cuartosAEquipo1: number,
-  cuartosAEquipo2: number,
-  cuartosBEquipo1: number,
-  cuartosBEquipo2: number,
-  cuartosCEquipo1: number,
-  cuartosCEquipo2: number,
-  cuartosDEquipo1: number,
-  cuartosDEquipo2: number,
-  semifinalAEquipo1: number,
-  semifinalAEquipo2: number,
-  semifinalBEquipo1: number,
-  semifinalBEquipo2: number,
-  finalEquipo1: number,
-  finalEquipo2: number,
-  campeon: number,
-}
-
 export interface CuadroFinalConEquipos {
   octavosAEquipo1: EquipoDB | null,
   octavosAEquipo2: EquipoDB | null,
@@ -89,69 +71,36 @@ export interface CuadroFinalConEquipos {
   activo: boolean,
 }
 
-
-export interface CuadroFinalConEquipos {
-  cuartosAEquipo1: EquipoDB | null,
-  cuartosAEquipo2: EquipoDB | null,
-  cuartosBEquipo1: EquipoDB | null,
-  cuartosBEquipo2: EquipoDB | null,
-  cuartosCEquipo1: EquipoDB | null,
-  cuartosCEquipo2: EquipoDB | null,
-  cuartosDEquipo1: EquipoDB | null,
-  cuartosDEquipo2: EquipoDB | null,
-  semifinalAEquipo1: EquipoDB | null,
-  semifinalAEquipo2: EquipoDB | null,
-  semifinalBEquipo1: EquipoDB | null,
-  semifinalBEquipo2: EquipoDB | null,
-  finalEquipo1: EquipoDB | null,
-  finalEquipo2: EquipoDB | null,
-  campeon: EquipoDB | null,
-}
-
 export interface PayloadCuadroFinal {
   [clave: string]: number,
 }
 
-export const ObtenerCuadroFinalActualBD = async (idDisciplinaClub: number): Promise<CuadroFinalDB[]> => {
+export const ObtenerCuadroFinalActualBD = async (idTorneo: number): Promise<CuadroFinalDB[]> => {
   return new Promise((resolve, reject)=> {
     const poolConexion = ConexionBaseDatos.obtenerPoolConexion()
     if (!poolConexion) return reject('No hay conexión a la base de datos')
     poolConexion.query(`
       SELECT cf.* FROM torneoDisciplinaClub as tdc
       INNER JOIN cuadroFinal as cf ON cf.idTorneoDisciplinaClub = tdc.id
-      WHERE tdc.idDisciplinaClub = ${idDisciplinaClub} AND tdc.activo = 1 AND cf.activo = 1
+      WHERE tdc.id = ${idTorneo}
     `, (error: any, elements: any)=> {
       if (error){
         console.log(error)
-        return reject('Error obteniendo partido fútbol actual')
+        return reject('Error obteniendo cuadro final actual')
       }
       return resolve(elements)
     })
   })
 }
 
-export const ObtenerCuadroFinalBD = async (): Promise<CuadroFinalDB[]> => {
-  return new Promise((resolve, reject)=> {
-    const poolConexion = ConexionBaseDatos.obtenerPoolConexion()
-    if (!poolConexion) return reject('No hay conexión a la base de datos')
-    poolConexion.query('SELECT * FROM cuadroFinal', (error: any, elements: any)=> {
-      if (error){
-        console.log(error)
-        return reject('Error obteniendo cuadro final')
-      }
-      return resolve(elements)
-    })
-  })
-}
-
-export const CrearCuadroFinalBD = async (idDisciplinaClub: number, payload: PayloadCuadroFinal): Promise<CuadroFinalDB[]> => {
+export const CrearCuadroFinalBD = async (idTorneo: number, payload: PayloadCuadroFinal): Promise<CuadroFinalDB[]> => {
   return new Promise((resolve, reject)=> {
     const poolConexion = ConexionBaseDatos.obtenerPoolConexion()
     if (!poolConexion) return reject('No hay conexión a la base de datos')
 
-    // Obtener idTorneoDisciplinaClub
+    // Validar torneo activo
     poolConexion.query(
-      `SELECT id FROM torneoDisciplinaClub WHERE idDisciplinaClub = ${idDisciplinaClub} and activo = 1`, 
+      `SELECT id FROM torneoDisciplinaClub WHERE id = ${idTorneo} and activo = 1`, 
     (error: any, elements: any)=> {
       if (error){
         return reject(error)
@@ -183,7 +132,7 @@ export const CrearCuadroFinalBD = async (idDisciplinaClub: number, payload: Payl
   })
 }
 
-export const ActualizarCuadroFinalBD = async (idDisciplinaClub: number, payload: PayloadCuadroFinal): Promise<CuadroFinalDB[]> => {
+export const ActualizarCuadroFinalBD = async (idTorneo: number, payload: PayloadCuadroFinal): Promise<CuadroFinalDB[]> => {
   return new Promise((resolve, reject)=> {
     const poolConexion = ConexionBaseDatos.obtenerPoolConexion()
     if (!poolConexion) return reject('No hay conexión a la base de datos')
@@ -196,7 +145,7 @@ export const ActualizarCuadroFinalBD = async (idDisciplinaClub: number, payload:
       UPDATE cuadroFinal as cf
       INNER JOIN torneoDisciplinaClub as tdc ON tdc.id = cf.idTorneoDisciplinaClub
       SET ${camposActualizar.join(', ')}
-      WHERE tdc.idDisciplinaClub = ${idDisciplinaClub} AND tdc.activo = 1 AND cf.activo = 1
+      WHERE tdc.id = ${idTorneo} AND tdc.activo = 1 AND cf.activo = 1
     `, (error: any, elements: any)=> {
       if (error){
         console.log(error)

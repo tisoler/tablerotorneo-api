@@ -25,14 +25,14 @@ export type PartidoFutbolBDConEquipos = PartidoFutbolBD & {
   minutosSegundoTiempo?: number,
 }
 
-export const ObtenerPartidoFutbolActualBD = async (idDisciplinaClub: number): Promise<PartidoFutbolBD[]> => {
+export const ObtenerPartidoFutbolActualBD = async (idTorneo: number): Promise<PartidoFutbolBD[]> => {
   return new Promise((resolve, reject)=> {
     const poolConexion = ConexionBaseDatos.obtenerPoolConexion()
     if (!poolConexion) return reject('No hay conexión a la base de datos')
     poolConexion.query(`
       SELECT pf.* FROM torneoDisciplinaClub as tdc
       INNER JOIN partidoFutbol as pf ON pf.idTorneoDisciplinaClub = tdc.id
-      WHERE tdc.idDisciplinaClub = ${idDisciplinaClub} AND tdc.activo = 1 AND pf.activo = 1
+      WHERE tdc.id = ${idTorneo} AND tdc.activo = 1 AND pf.activo = 1
     `, (error: any, elements: any)=> {
       if (error){
         console.log(error)
@@ -43,7 +43,7 @@ export const ObtenerPartidoFutbolActualBD = async (idDisciplinaClub: number): Pr
   })
 }
 
-export const CrearPartidoFutbolActualBD = async (idDisciplinaClub: number, payload: PayloadPartidoActual): Promise<PartidoFutbolBD[]> => {
+export const CrearPartidoFutbolActualBD = async (idTorneo: number, payload: PayloadPartidoActual): Promise<PartidoFutbolBD[]> => {
   return new Promise((resolve, reject)=> {
     // Existente
     if (payload.id > 0) return reject('Partido de fútbol existente')
@@ -51,9 +51,9 @@ export const CrearPartidoFutbolActualBD = async (idDisciplinaClub: number, paylo
     const poolConexion = ConexionBaseDatos.obtenerPoolConexion()
     if (!poolConexion) return reject('No hay conexión a la base de datos')
 
-    // Obtener idTorneoDisciplinaClub
+    // Validar torneo activo
     poolConexion.query(
-      `SELECT id FROM torneoDisciplinaClub WHERE idDisciplinaClub = ${idDisciplinaClub} and activo = 1`, 
+      `SELECT id FROM torneoDisciplinaClub WHERE id = ${idTorneo} and activo = 1`, 
     (error: any, elements: any)=> {
       if (error){
         return reject(error)
@@ -89,7 +89,7 @@ export const CrearPartidoFutbolActualBD = async (idDisciplinaClub: number, paylo
   })
 }
 
-export const ActualizarPartidoFutbolActualBD = async (idDisciplinaClub: number, idPartidoFutbol: number, payload: PayloadPartidoActual): Promise<PartidoFutbolBD[]> => {
+export const ActualizarPartidoFutbolActualBD = async (idTorneo: number, idPartidoFutbol: number, payload: PayloadPartidoActual): Promise<PartidoFutbolBD[]> => {
   return new Promise((resolve, reject)=> {
     if (idPartidoFutbol <= 0) return reject('Partido de fútbol no existente')
 
@@ -102,12 +102,12 @@ export const ActualizarPartidoFutbolActualBD = async (idDisciplinaClub: number, 
       (campo: string) => ['inicioPrimerTiempo', 'inicioSegundoTiempo'].includes(campo) ? `pf.${campo} = '${payload[campo]}'` : `pf.${campo} = ${payload[campo]}`
     )
 
-    // Validamos acceso con idDisciplinaClub
+    // Validamos acceso con idTorneo
     poolConexion.query(`
       UPDATE partidoFutbol as pf
       INNER JOIN torneoDisciplinaClub as tdc ON tdc.id = pf.idTorneoDisciplinaClub
       SET ${camposActualizar.join(', ')}
-      WHERE pf.id = ${idPartidoFutbol} AND tdc.idDisciplinaClub = ${idDisciplinaClub}
+      WHERE pf.id = ${idPartidoFutbol} AND tdc.id = ${idTorneo}
     `, (error: any, elements: any)=> {
       if (error){
         console.log(error)
@@ -118,7 +118,7 @@ export const ActualizarPartidoFutbolActualBD = async (idDisciplinaClub: number, 
   })
 }
 
-export const BorrarPartidoFutbolActualBD = async (idDisciplinaClub: number, idPartidoFutbol: number, payload: PayloadPartidoActual): Promise<PartidoFutbolBD[]> => {
+export const BorrarPartidoFutbolActualBD = async (idTorneo: number, idPartidoFutbol: number, payload: PayloadPartidoActual): Promise<PartidoFutbolBD[]> => {
   return new Promise((resolve, reject)=> {
     if (idPartidoFutbol <= 0) return reject('Partido de fútbol no existente')
 
@@ -127,11 +127,11 @@ export const BorrarPartidoFutbolActualBD = async (idDisciplinaClub: number, idPa
     const poolConexion = ConexionBaseDatos.obtenerPoolConexion()
     if (!poolConexion) return reject('No hay conexión a la base de datos')
 
-    // Validamos acceso con idDisciplinaClub
+    // Validamos acceso con idTorneo
     poolConexion.query(`
       DELETE pf.* FROM partidoFutbol as pf
       INNER JOIN torneoDisciplinaClub as tdc ON tdc.id = pf.idTorneoDisciplinaClub
-      WHERE pf.id = ${idPartidoFutbol} AND tdc.idDisciplinaClub = ${idDisciplinaClub}
+      WHERE pf.id = ${idPartidoFutbol} AND tdc.id = ${idTorneo}
     `, (error: any, elements: any)=> {
       if (error){
         console.log(error)

@@ -32,15 +32,14 @@ export const ObtenerEquipoBD = async (idEquipo: number): Promise<EquipoDB[]> => 
   })
 }
 
-export const ObtenerEquiposBD = async (idDisciplinaClub: number): Promise<EquipoDB[]> => {
+export const ObtenerEquiposParaTorneoBD = async (idTorneo: number): Promise<EquipoDB[]> => {
   return new Promise((resolve, reject)=> {
     const poolConexion = ConexionBaseDatos.obtenerPoolConexion()
     if (!poolConexion) return reject('No hay conexión a la base de datos')
     poolConexion.query(`
       SELECT e.* FROM equipo e
       INNER JOIN torneoDisciplinaClub tdc ON tdc.id = e.idTorneoDisciplinaClub
-      INNER JOIN disciplinaClub dc ON dc.id = tdc.idDisciplinaClub
-      WHERE dc.id = ${idDisciplinaClub} AND tdc.activo = 1
+      WHERE tdc.id = ${idTorneo}
     `, (error: any, elements: any)=> {
       if (error){
         console.log(error)
@@ -51,7 +50,7 @@ export const ObtenerEquiposBD = async (idDisciplinaClub: number): Promise<Equipo
   })
 }
 
-export const ActualizarEquipoBD = async (idDisciplinaClub: number, idEquipo: number, payload: PayloadEquipo): Promise<EquipoDB[]> => {
+export const ActualizarEquipoBD = async (idTorneo: number, idEquipo: number, payload: PayloadEquipo): Promise<EquipoDB[]> => {
   return new Promise((resolve, reject)=> {
     const poolConexion = ConexionBaseDatos.obtenerPoolConexion()
     if (!poolConexion) return reject('No hay conexión a la base de datos')
@@ -60,12 +59,12 @@ export const ActualizarEquipoBD = async (idDisciplinaClub: number, idEquipo: num
       (campo: string) => `e.${campo} = ${payload[campo]}`
     )
 
-    // Validamos acceso con idDisciplinaClub
+    // Validamos acceso con idTorneo
     poolConexion.query(`
       UPDATE equipo as e
       INNER JOIN torneoDisciplinaClub as tdc ON tdc.id = e.idTorneoDisciplinaClub
       SET ${camposActualizar.join(', ')}
-      WHERE e.id = ${idEquipo} AND tdc.idDisciplinaClub = ${idDisciplinaClub}
+      WHERE e.id = ${idEquipo} AND tdc.id = ${idTorneo}
     `, (error: any, elements: any)=> {
       if (error){
         console.log(error)

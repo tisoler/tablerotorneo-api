@@ -1,15 +1,15 @@
 import { Response } from 'express'
-import { CrearActualizarCuadroFinal, ObtenerCuadroFinalActual } from '../manejadores/cuadroFinal'
+import { CrearActualizarCuadroFinalParaTorneo, ObtenerCuadroFinalParaTorneo } from '../manejadores/cuadroFinal'
 import { RequestConUsuario } from '../middlewares/verifcarToken'
 
-export const RutaObtenerCuadroFinalActual = async (req: RequestConUsuario, res: Response)=>{
+export const RutaObtenerCuadroFinalParaTorneo = async (req: RequestConUsuario, res: Response) => {
   try {
-    if (!req.params?.idDisciplinaClub && !req?.usuario?.idDisciplinaClub || req.params?.idDisciplinaClub && isNaN(Number(req.params.idDisciplinaClub))) {
+    if (!req.params?.idTorneo && !req?.usuario?.idTorneo || req.params?.idTorneo && isNaN(Number(req.params.idTorneo))) {
       res.sendStatus(400)
       return
     }
-    const idDisciplinaClub = req.params?.idDisciplinaClub ? parseInt(req.params.idDisciplinaClub) : req?.usuario?.idDisciplinaClub
-    const cuadroFinal = await ObtenerCuadroFinalActual(idDisciplinaClub || -1)
+    const idTorneo = req.params?.idTorneo ? parseInt(req.params.idTorneo) : req?.usuario?.idTorneo
+    const cuadroFinal = await ObtenerCuadroFinalParaTorneo(idTorneo || -1)
     res.status(200).json(cuadroFinal)
   } catch(e) {
     console.log(e)
@@ -17,14 +17,14 @@ export const RutaObtenerCuadroFinalActual = async (req: RequestConUsuario, res: 
   }
 }
 
-export const RutaCrearActualizarCuadroFinal = async (req: RequestConUsuario, res: Response)=>{
+export const RutaCrearActualizarCuadroParaTorneo = async (req: RequestConUsuario, res: Response) => {
   try {
-    if (!req?.body || !req?.usuario?.idDisciplinaClub) {
+    if (!req?.body || !req?.usuario?.idTorneo) {
       res.sendStatus(400)
       return
     }
-    const idDisciplinaClub = req.params?.idDisciplinaClub ? parseInt(req.params.idDisciplinaClub) : req?.usuario?.idDisciplinaClub
-    const cuadroFinal = await CrearActualizarCuadroFinal(idDisciplinaClub || -1, req.body)
+    const idTorneo = req.params?.idTorneo ? parseInt(req.params.idTorneo) : req?.usuario?.idTorneo
+    const cuadroFinal = await CrearActualizarCuadroFinalParaTorneo(idTorneo || -1, req.body)
     res.status(200).json(cuadroFinal)
   } catch(e) {
     console.log(e)
