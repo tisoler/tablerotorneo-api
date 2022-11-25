@@ -9,6 +9,12 @@ import {
   PayloadPartidoTenisPadel,
 } from '../baseDatos/partidoTenisPadel'
 import { ObtenerEquipoBD, EquipoDB } from '../baseDatos/equipo'
+import { ObtenerTorneo } from './torneo'
+
+enum TipoTorneo {
+  PadelSuperTieBreak = 1,
+  PadelSetA9 = 7,
+}
 
 export const ObtenerPartidoTenisPadelActual = async (idTorneo: number): Promise<PartidoTenisPadelBDConEquipos | null> => {
   const resultado: PartidoTenisPadelBD[] = await ObtenerPartidoTenisPadelActualBD(idTorneo)
@@ -160,6 +166,19 @@ const game = (partidoTenisPadel: PartidoTenisPadelBDConEquipos, esEquipo1: boole
   }
 }
 
+const gameSetA9 = (partidoTenisPadel: PartidoTenisPadelBDConEquipos, esEquipo1: boolean) => {
+  let payloadGame = {}
+  payloadGame = esEquipo1 ? { equipo1Set1: partidoTenisPadel.equipo1Set1 + 1 } : { equipo2Set1: partidoTenisPadel.equipo2Set1 + 1 }
+
+  const cambioSaque = { sacaEquipo1: partidoTenisPadel?.sacaEquipo1 ? !partidoTenisPadel.sacaEquipo1 : true }
+
+  return {
+    ...payloadGame,
+    ...(!esEquipo1 ? { equipo1Game: 0 } : { equipo2Game: 0 }),
+    ...cambioSaque,
+  }
+}
+
 const obtenerPayloadActualizacion = async (idTorneo: number, suma: boolean, esEquipo1: boolean) => {
   let puntaje = 0
   const partidoTenisPadel = await ObtenerPartidoTenisPadelActual(idTorneo)
@@ -218,10 +237,61 @@ const obtenerPayloadActualizacion = async (idTorneo: number, suma: boolean, esEq
   }
 }
 
+const obtenerPayloadActualizacionSetA9 = async (idTorneo: number, suma: boolean, esEquipo1: boolean) => {
+  let puntaje = 0
+  const partidoTenisPadel = await ObtenerPartidoTenisPadelActual(idTorneo)
+  if (!partidoTenisPadel) throw new Error('No hay partido de tenis/pádel actual.')
+  const puntajeActual = esEquipo1 ? partidoTenisPadel.equipo1Game : partidoTenisPadel.equipo2Game
+
+  let payload = {}
+
+  switch (partidoTenisPadel.tipoGame) {
+    case 'tie-break':
+      const { puntajeGame, payloadGame } = procesarTieBreak(puntajeActual, partidoTenisPadel, esEquipo1, suma)
+      puntaje = puntajeGame
+      payload = payloadGame
+      break
+    default: 
+      switch (puntajeActual) {
+        case 15:
+          puntaje = suma ? 30 : 0
+          break
+        case 30:
+          puntaje = suma ? 40 : 15
+          break
+        case 40:
+          puntaje = suma ? 0 : 30
+          if (suma) {
+            payload = gameSetA9(partidoTenisPadel, esEquipo1)
+          }
+          break
+        default: // 0
+          puntaje = suma ? 15 : 0
+          break
+      }
+      break
+  }
+
+  return {
+    ...payload,
+    ...(esEquipo1 ? { equipo1Game: puntaje } : { equipo2Game: puntaje })
+  }
+}
+
 export const ActualizarGame = async (idTorneo: number, idPartidoTenisPadel: number, payload: { suma: boolean, esEquipo1: boolean }): Promise<PartidoTenisPadelBDConEquipos | null> => {
   const { suma, esEquipo1 } = payload
 
-  const payloadActualizar = await obtenerPayloadActualizacion(idTorneo, suma, esEquipo1)
+  const torneo = await ObtenerTorneo(idTorneo)
+  const tipoTorneo = torneo?.idTipoTorneo && TipoTorneo[torneo.idTipoTorneo] ? TipoTorneo[torneo.idTipoTorneo] : TipoTorneo.PadelSuperTieBreak
+
+  let payloadActualizar
+
+  switch (tipoTorneo) {
+    case TipoTorneo.PadelSetA9:
+      payloadActualizar = await obtenerPayloadActualizacionSetA9(idTorneo, suma, esEquipo1)
+    default:
+      payloadActualizar = await obtenerPayloadActualizacion(idTorneo, suma, esEquipo1)
+  }
 
   return await ActualizarPartidoTenisPadel(idTorneo, idPartidoTenisPadel, payloadActualizar)
 }

@@ -1,4 +1,4 @@
-import { ObtenerTorneosBD, TorneoBD } from "../baseDatos/torneo"
+import { ObtenerTorneoBD, ObtenerTorneosBD, TorneoBD } from "../baseDatos/torneo"
 
 export const ObtenerTorneoActual = async (idDisciplinaClub: number): Promise<TorneoBD | null> => {
   const torneos: TorneoBD[] = await ObtenerTorneosBD(idDisciplinaClub)
@@ -24,4 +24,14 @@ export const ObtenerTorneos = async (idDisciplinaClub: number): Promise<TorneoBD
   }
 
   return torneos
+}
+
+export const ObtenerTorneo = async (idTorneo: number): Promise<TorneoBD | null> => {
+  const torneos: TorneoBD[] = await ObtenerTorneoBD(idTorneo)
+  if (!torneos?.length) {
+    console.log(`No hay torneo con id ${idTorneo}.`)
+    return null
+  }
+
+  return torneos[0]
 }
