@@ -7,7 +7,7 @@ import {
 	RutaBorrarPartidoTenisPadel,
 	RutaCrearPartidoTenisPadel,
 	RutaObtenerPartidosTenisPadelParaTorneo,
-	RutaObtenerPartidoTenisPadelActual
+	RutaObtenerPartidosTenisPadelActuales
 } from './rutas/partidoTenisPadel'
 import { RutaActualizarEquipo, RutaObtenerEquiposParaTorneo } from './rutas/equipo'
 import { RutaActualizarConfiguracion, RutaObtenerConfiguracion } from './rutas/configuracion'
@@ -40,8 +40,8 @@ apiRouter.put('/configuracion', verificarToken, RutaActualizarConfiguracion)
 apiRouter.get('/torneo/torneoActual/:idDisciplinaClub', RutaObtenerTorneoActual)
 apiRouter.get('/torneo/:idDisciplinaClub', RutaObtenerTorneos)
 
-apiRouter.get('/partidoTenisPadel', verificarToken, RutaObtenerPartidoTenisPadelActual)
-apiRouter.get('/partidoTenisPadel/:idTorneo', RutaObtenerPartidoTenisPadelActual)
+apiRouter.get('/partidoTenisPadel', verificarToken, RutaObtenerPartidosTenisPadelActuales)
+apiRouter.get('/partidoTenisPadel/:idTorneo', RutaObtenerPartidosTenisPadelActuales)
 apiRouter.get('/partidoTenisPadel/torneo/:idTorneo', RutaObtenerPartidosTenisPadelParaTorneo)
 apiRouter.post('/partidoTenisPadel', verificarToken, RutaCrearPartidoTenisPadel)
 apiRouter.put('/partidoTenisPadel/:idPartidoTenisPadel', verificarToken, RutaActualizarPartidoTenisPadel)

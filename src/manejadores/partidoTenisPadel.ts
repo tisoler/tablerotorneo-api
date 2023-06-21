@@ -3,7 +3,8 @@ import {
   BorrarPartidoTenisPadelBD,
   CrearPartidoTenisPadelBD,
   ObtenerPartidosTenisPadelParaTorneoBD,
-  ObtenerPartidoTenisPadelActualBD,
+  ObtenerPartidosTenisPadelActualesBD,
+  ObtenerPartidoTenisPadelBD,
   PartidoTenisPadelBD,
   PartidoTenisPadelBDConEquipos,
   PayloadPartidoTenisPadel,
@@ -16,10 +17,36 @@ enum TipoTorneo {
   PadelSetA9 = 7,
 }
 
-export const ObtenerPartidoTenisPadelActual = async (idTorneo: number): Promise<PartidoTenisPadelBDConEquipos | null> => {
-  const resultado: PartidoTenisPadelBD[] = await ObtenerPartidoTenisPadelActualBD(idTorneo)
+export const ObtenerPartidosTenisPadelActuales = async (idTorneo: number): Promise<PartidoTenisPadelBDConEquipos[] | null> => {
+  const resultado: PartidoTenisPadelBD[] = await ObtenerPartidosTenisPadelActualesBD(idTorneo)
   if (!resultado?.length) {
-    console.log(`No hay partido de tenis/pádel actual para el torneo ${idTorneo}`)
+    console.log(`No hay partidos de tenis/pádel actuales para el torneo ${idTorneo}`)
+    return null
+  }
+
+  let partidosTenisPadelBD = resultado
+  const partidosTenisPadel = Promise.all(partidosTenisPadelBD?.map(async (partido: PartidoTenisPadelBD) => {
+    const resultadoEquipo1: EquipoDB[] = await ObtenerEquipoBD(partido.idEquipo1)
+    const resultadoEquipo2: EquipoDB[] = await ObtenerEquipoBD(partido.idEquipo2)
+
+    if (!resultadoEquipo1?.length || !resultadoEquipo2?.length) throw new Error(`No hay equipo 1 ó 2 en el partido actual id ${partido.id}.`)
+
+    const partidoTenisPadel = {
+      ...partido,
+      equipo1: resultadoEquipo1[0],
+      equipo2: resultadoEquipo2[0],
+    }
+
+    return partidoTenisPadel
+  })) || []
+  
+  return partidosTenisPadel
+}
+
+export const ObtenerPartidoTenisPadel = async (idPartido: number): Promise<PartidoTenisPadelBDConEquipos | null> => {
+  const resultado: PartidoTenisPadelBD[] = await ObtenerPartidoTenisPadelBD(idPartido)
+  if (!resultado?.length) {
+    console.log(`No hay partido de tenis/pádel actual para el id ${idPartido}`)
     return null
   }
 
@@ -28,14 +55,14 @@ export const ObtenerPartidoTenisPadelActual = async (idTorneo: number): Promise<
   const resultadoEquipo1: EquipoDB[] = await ObtenerEquipoBD(partidoTenisPadelBD.idEquipo1)
   const resultadoEquipo2: EquipoDB[] = await ObtenerEquipoBD(partidoTenisPadelBD.idEquipo2)
 
-  if (!resultadoEquipo1?.length || !resultadoEquipo2?.length) throw new Error('No hay equipo 1 ó 2 en el partido actual.')
+  if (!resultadoEquipo1?.length || !resultadoEquipo2?.length) throw new Error(`No hay equipo 1 ó 2 en el partido id ${partidoTenisPadelBD.id}.`)
 
   const partidoTenisPadel = {
     ...partidoTenisPadelBD,
     equipo1: resultadoEquipo1[0],
     equipo2: resultadoEquipo2[0],
   }
-
+  
   return partidoTenisPadel
 }
 
@@ -65,22 +92,22 @@ export const ObtenerPartidosTenisPadelParaTorneo = async (idTorneo: number): Pro
   return partidosTenisPadel
 }
 
-export const CrearPartidoTenisPadel = async (idTorneo: number, payload: PayloadPartidoTenisPadel): Promise<PartidoTenisPadelBDConEquipos | null> => {
-  const actualizacion: PartidoTenisPadelBD[] = await CrearPartidoTenisPadelBD(idTorneo, payload)
+export const CrearPartidoTenisPadel = async (idTorneo: number, payload: PayloadPartidoTenisPadel): Promise<PartidoTenisPadelBDConEquipos[] | null> => {
+  await CrearPartidoTenisPadelBD(idTorneo, payload)
   
-  return await ObtenerPartidoTenisPadelActual(idTorneo)
+  return await ObtenerPartidosTenisPadelActuales(idTorneo)
 }
 
-export const ActualizarPartidoTenisPadel = async (idTorneo: number, idPartidoTenisPadel: number, payload: PayloadPartidoTenisPadel): Promise<PartidoTenisPadelBDConEquipos | null> => {
-  const actualizacion: PartidoTenisPadelBD[] = await ActualizarPartidoTenisPadelBD(idTorneo, idPartidoTenisPadel, payload)
+export const ActualizarPartidoTenisPadel = async (idTorneo: number, idPartidoTenisPadel: number, payload: PayloadPartidoTenisPadel): Promise<PartidoTenisPadelBDConEquipos[] | null> => {
+  await ActualizarPartidoTenisPadelBD(idTorneo, idPartidoTenisPadel, payload)
   
-  return await ObtenerPartidoTenisPadelActual(idTorneo)
+  return await ObtenerPartidosTenisPadelActuales(idTorneo)
 }
 
-export const BorrarPartidoTenisPadel = async (idTorneo: number, idPartidoTenisPadel: number, payload: PayloadPartidoTenisPadel): Promise<PartidoTenisPadelBDConEquipos | null> => {
-  const actualizacion: PartidoTenisPadelBD[] = await BorrarPartidoTenisPadelBD(idTorneo, idPartidoTenisPadel, payload)
+export const BorrarPartidoTenisPadel = async (idTorneo: number, idPartidoTenisPadel: number, payload: PayloadPartidoTenisPadel): Promise<PartidoTenisPadelBDConEquipos[] | null> => {
+  await BorrarPartidoTenisPadelBD(idTorneo, idPartidoTenisPadel, payload)
   
-  return null
+  return await ObtenerPartidosTenisPadelActuales(idTorneo)
 }
 
 const procesarTieBreak = (puntajeActual: number, partidoTenisPadel: PartidoTenisPadelBDConEquipos, esEquipo1: boolean, suma: boolean) => {
@@ -179,10 +206,8 @@ const gameSetA9 = (partidoTenisPadel: PartidoTenisPadelBDConEquipos, esEquipo1: 
   }
 }
 
-const obtenerPayloadActualizacion = async (idTorneo: number, suma: boolean, esEquipo1: boolean) => {
+const obtenerPayloadActualizacion = async (partidoTenisPadel: PartidoTenisPadelBDConEquipos, suma: boolean, esEquipo1: boolean) => {
   let puntaje = 0
-  const partidoTenisPadel = await ObtenerPartidoTenisPadelActual(idTorneo)
-  if (!partidoTenisPadel) throw new Error('No hay partido de tenis/pádel actual.')
   const puntajeActual = esEquipo1 ? partidoTenisPadel.equipo1Game : partidoTenisPadel.equipo2Game
   const puntajeActualOtroEquipo = !esEquipo1 ? partidoTenisPadel.equipo1Game : partidoTenisPadel.equipo2Game
 
@@ -237,10 +262,8 @@ const obtenerPayloadActualizacion = async (idTorneo: number, suma: boolean, esEq
   }
 }
 
-const obtenerPayloadActualizacionSetA9 = async (idTorneo: number, suma: boolean, esEquipo1: boolean) => {
+const obtenerPayloadActualizacionSetA9 = async (partidoTenisPadel: PartidoTenisPadelBDConEquipos, suma: boolean, esEquipo1: boolean) => {
   let puntaje = 0
-  const partidoTenisPadel = await ObtenerPartidoTenisPadelActual(idTorneo)
-  if (!partidoTenisPadel) throw new Error('No hay partido de tenis/pádel actual.')
   const puntajeActual = esEquipo1 ? partidoTenisPadel.equipo1Game : partidoTenisPadel.equipo2Game
 
   let payload = {}
@@ -278,20 +301,22 @@ const obtenerPayloadActualizacionSetA9 = async (idTorneo: number, suma: boolean,
   }
 }
 
-export const ActualizarGame = async (idTorneo: number, idPartidoTenisPadel: number, payload: { suma: boolean, esEquipo1: boolean }): Promise<PartidoTenisPadelBDConEquipos | null> => {
+export const ActualizarGame = async (idTorneo: number, idPartidoTenisPadel: number, payload: { suma: boolean, esEquipo1: boolean }): Promise<PartidoTenisPadelBDConEquipos[] | null> => {
   const { suma, esEquipo1 } = payload
-
+  const partidoTenisPadel = await ObtenerPartidoTenisPadel(idPartidoTenisPadel)
+  if (!partidoTenisPadel) throw new Error('No hay partido de tenis/pádel actual.')
   const torneo = await ObtenerTorneo(idTorneo)
-  const tipoTorneo = torneo?.idTipoTorneo && TipoTorneo[torneo.idTipoTorneo] ? TipoTorneo[torneo.idTipoTorneo] : TipoTorneo.PadelSuperTieBreak
+  const tipoTorneo = torneo?.idTipoTorneo && TipoTorneo[torneo.idTipoTorneo] ? torneo.idTipoTorneo : TipoTorneo.PadelSuperTieBreak
 
   let payloadActualizar
 
   switch (tipoTorneo) {
     case TipoTorneo.PadelSetA9:
-      payloadActualizar = await obtenerPayloadActualizacionSetA9(idTorneo, suma, esEquipo1)
+      payloadActualizar = await obtenerPayloadActualizacionSetA9(partidoTenisPadel, suma, esEquipo1)
     default:
-      payloadActualizar = await obtenerPayloadActualizacion(idTorneo, suma, esEquipo1)
+      payloadActualizar = await obtenerPayloadActualizacion(partidoTenisPadel, suma, esEquipo1)
   }
 
+  // Validamos acceso con idTorneo
   return await ActualizarPartidoTenisPadel(idTorneo, idPartidoTenisPadel, payloadActualizar)
 }

@@ -18,6 +18,7 @@ export interface PartidoTenisPadelBD {
   sacaEquipo1: boolean,
   tipoGame: 'game' | 'tie-break',
   activo: boolean,
+  idTorneoDisciplinaClub: number,
 }
 
 export type PartidoTenisPadelBDConEquipos = PartidoTenisPadelBD & {
@@ -29,7 +30,7 @@ export interface PayloadPartidoTenisPadel {
   [clave: string]: number,
 }
 
-export const ObtenerPartidoTenisPadelActualBD = async (idTorneo: number): Promise<PartidoTenisPadelBD[]> => {
+export const ObtenerPartidosTenisPadelActualesBD = async (idTorneo: number): Promise<PartidoTenisPadelBD[]> => {
   return new Promise((resolve, reject)=> {
     const poolConexion = ConexionBaseDatos.obtenerPoolConexion()
     if (!poolConexion) return reject('No hay conexión a la base de datos')
@@ -41,6 +42,23 @@ export const ObtenerPartidoTenisPadelActualBD = async (idTorneo: number): Promis
       if (error){
         console.log(error)
         return reject(`Error obteniendo partido actual para el torneo ${idTorneo}.`)
+      }
+      return resolve(elements)
+    })
+  })
+}
+
+export const ObtenerPartidoTenisPadelBD = async (idPartido: number): Promise<PartidoTenisPadelBD[]> => {
+  return new Promise((resolve, reject)=> {
+    const poolConexion = ConexionBaseDatos.obtenerPoolConexion()
+    if (!poolConexion) return reject('No hay conexión a la base de datos')
+    poolConexion.query(`
+      SELECT * FROM partidoTenisPadel
+      WHERE id = ${idPartido}
+    `, (error: any, elements: any)=> {
+      if (error){
+        console.log(error)
+        return reject(`Error obteniendo partido para el id ${idPartido}.`)
       }
       return resolve(elements)
     })

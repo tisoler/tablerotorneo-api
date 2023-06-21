@@ -1,16 +1,23 @@
 import { Response } from 'express'
-import { ObtenerPartidoTenisPadelActual, ActualizarPartidoTenisPadel, ActualizarGame, CrearPartidoTenisPadel, BorrarPartidoTenisPadel, ObtenerPartidosTenisPadelParaTorneo } from '../manejadores/partidoTenisPadel'
+import {
+  ObtenerPartidosTenisPadelActuales,
+  ActualizarPartidoTenisPadel,
+  ActualizarGame,
+  CrearPartidoTenisPadel,
+  BorrarPartidoTenisPadel,
+  ObtenerPartidosTenisPadelParaTorneo
+} from '../manejadores/partidoTenisPadel'
 import { RequestConUsuario } from '../middlewares/verifcarToken'
 
-export const RutaObtenerPartidoTenisPadelActual = async (req: RequestConUsuario, res: Response) => {
+export const RutaObtenerPartidosTenisPadelActuales = async (req: RequestConUsuario, res: Response) => {
   try {
     if (!req.params?.idTorneo && !req?.usuario?.idTorneo || req.params?.idTorneo && isNaN(Number(req.params.idTorneo))) {
       res.sendStatus(400)
       return
     }
     const idTorneo = req.params?.idTorneo ? parseInt(req.params?.idTorneo) : req?.usuario?.idTorneo
-    const partidoTenisPadel = await ObtenerPartidoTenisPadelActual(idTorneo || -1)
-    res.status(200).json(partidoTenisPadel)
+    const partidosTenisPadel = await ObtenerPartidosTenisPadelActuales(idTorneo || -1)
+    res.status(200).json(partidosTenisPadel)
   } catch(e) {
     console.log(e)
     res.status(400).send(e)
@@ -38,8 +45,8 @@ export const RutaCrearPartidoTenisPadel = async (req: RequestConUsuario, res: Re
       res.sendStatus(400)
       return
     }
-    const partidoActual = await CrearPartidoTenisPadel(req.usuario.idTorneo, req.body)
-    res.status(200).json(partidoActual)
+    const partidosTenisPadel = await CrearPartidoTenisPadel(req.usuario.idTorneo, req.body)
+    res.status(200).json(partidosTenisPadel)
   } catch(e) {
     console.log(e)
     res.status(400).send(e)
@@ -52,8 +59,8 @@ export const RutaActualizarPartidoTenisPadel = async (req: RequestConUsuario, re
       res.sendStatus(400)
       return
     }
-    const partidoTenisPadel = await ActualizarPartidoTenisPadel(req.usuario.idTorneo, parseInt(req.params.idPartidoTenisPadel), req.body)
-    res.status(200).json(partidoTenisPadel)
+    const partidosTenisPadel = await ActualizarPartidoTenisPadel(req.usuario.idTorneo, parseInt(req.params.idPartidoTenisPadel), req.body)
+    res.status(200).json(partidosTenisPadel)
   } catch(e) {
     console.log(e)
     res.status(400).send(e)
@@ -66,8 +73,8 @@ export const RutaBorrarPartidoTenisPadel = async (req: RequestConUsuario, res: R
       res.sendStatus(400)
       return
     }
-    const partidoActual = await BorrarPartidoTenisPadel(req.usuario.idTorneo, parseInt(req.params.idPartidoTenisPadel), req.body)
-    res.status(200).json(partidoActual)
+    const partidosTenisPadel = await BorrarPartidoTenisPadel(req.usuario.idTorneo, parseInt(req.params.idPartidoTenisPadel), req.body)
+    res.status(200).json(partidosTenisPadel)
   } catch(e) {
     console.log(e)
     res.status(400).send(e)
@@ -80,8 +87,9 @@ export const RutaActualizarGame = async (req: RequestConUsuario, res: Response) 
       res.sendStatus(400)
       return
     }
-    const partidoTenisPadel = await ActualizarGame(req.usuario.idTorneo, parseInt(req.params.idPartidoTenisPadel), req.body)
-    res.status(200).json(partidoTenisPadel)
+    // Validamos acceso con idTorneo
+    const partidosTenisPadel = await ActualizarGame(req.usuario.idTorneo, parseInt(req.params.idPartidoTenisPadel), req.body)
+    res.status(200).json(partidosTenisPadel)
   } catch(e) {
     console.log(e)
     res.status(400).send(e)
