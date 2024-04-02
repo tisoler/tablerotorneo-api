@@ -18,6 +18,8 @@ import { RutaObtenerDisciplinasClubes } from './rutas/disciplinaClub'
 import { RutaActualizarPartidoFutbolActual, RutaBorrarPartidoFutbolActual, RutaCrearPartidoFutbolActual, RutaObtenerPartidoFutbolActual } from './rutas/partidoFutbol'
 import { RutaActualizarPartidoHockeyActual, RutaBorrarPartidoHockeyActual, RutaCrearPartidoHockeyActual, RutaObtenerPartidoHockeyActual } from './rutas/partidoHockey'
 import { RutaObtenerTorneoActual, RutaObtenerTorneos } from './rutas/torneo'
+import { RutaObtenerJuagadoresParaDisciplinaClub } from './rutas/jugador'
+import { RutaObtenerCategoriasParaDisciplinaClub } from './rutas/categoria'
 
 dotenv.config()
 
@@ -67,6 +69,10 @@ apiRouter.put('/equipos/:idEquipo', verificarToken, RutaActualizarEquipo)
 apiRouter.get('/cuadroFinal/:idTorneo', RutaObtenerCuadroFinalParaTorneo)
 apiRouter.get('/cuadroFinal', verificarToken, RutaObtenerCuadroFinalParaTorneo)
 apiRouter.post('/cuadroFinal', verificarToken, RutaCrearActualizarCuadroParaTorneo)
+
+apiRouter.get('/categorias/:idDisciplinaClub', RutaObtenerCategoriasParaDisciplinaClub)
+
+apiRouter.get('/jugadores/:idDisciplinaClub/:idCategoria?', RutaObtenerJuagadoresParaDisciplinaClub)
 
 const corsOptions = {
 	origin: [FRONTEND_URL, 'http://localhost:3000'],
